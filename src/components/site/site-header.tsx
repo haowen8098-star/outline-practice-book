@@ -4,10 +4,10 @@ import { navItems, cn } from "@/lib/site";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/60 bg-[color:var(--background)]/84 backdrop-blur-xl">
-      <div className="page-shell flex items-center justify-between gap-4 py-3.5">
+    <header className="sticky top-0 z-40 border-b border-[color:var(--border-soft)] bg-[color:var(--background)]/92 backdrop-blur-xl">
+      <div className="page-shell flex items-center justify-between gap-4 py-4">
         <Link href="/" className="group button-pop flex items-center gap-3">
-          <span className="flex size-11 items-center justify-center rounded-2xl border border-white/80 bg-white/92 text-lg shadow-[0_18px_40px_rgba(105,142,125,0.12)] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-6">
+          <span className="flex size-11 items-center justify-center rounded-2xl border border-[color:var(--border-soft)] bg-white text-lg shadow-[0_12px_30px_rgba(105,142,125,0.08)] transition-transform duration-300 group-hover:-translate-y-0.5">
             〇
           </span>
           <div>
@@ -23,7 +23,7 @@ export function SiteHeader() {
               href={item.href}
               className={cn(
                 "button-pop rounded-full px-4 py-2 text-sm font-medium text-[color:var(--muted-foreground)] transition-colors duration-200",
-                "hover:bg-white/85 hover:text-[color:var(--foreground)]",
+                "hover:bg-white hover:text-[color:var(--foreground)]",
               )}
             >
               {item.label}

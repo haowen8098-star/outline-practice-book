@@ -31,95 +31,94 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
   return (
     <div className="space-y-12 pb-24 pt-6 sm:space-y-14">
       <section className="page-shell">
-        <div className="section-card overflow-hidden px-5 py-7 sm:px-8 sm:py-9 lg:px-10 lg:py-10">
-          <div className="grid items-start gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10">
-            <div className="space-y-7">
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-[color:var(--soft-mint)] px-4 py-2 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
+        <div className="overflow-hidden rounded-[42px] border border-[color:var(--border-soft)] bg-[color:var(--surface)] shadow-[var(--shadow-strong)]">
+          <div className="grid gap-0 lg:grid-cols-[0.82fr_1.18fr]">
+            <div className="px-6 py-8 sm:px-10 sm:py-10 lg:px-12 lg:py-12">
+              <div className="space-y-6">
+                <span className="inline-flex rounded-full bg-[color:var(--soft-mint)] px-4 py-2 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
                   中文空心字参考
                 </span>
-              </div>
 
-              <div className="space-y-5">
-                <h1 className="text-balance text-[2.9rem] font-semibold tracking-tight text-[color:var(--foreground)] sm:text-6xl">
-                  把普通字，变成
-                  <span className="hero-gradient-text">清楚好抄</span>
-                  的空心字。
-                </h1>
-                <p className="max-w-2xl text-lg leading-9 text-[color:var(--muted-foreground)]">
-                  输入文字后，先看轮廓效果，再挑适合标题、手账或笔记的写法。想照着练时，直接打印参考页就可以。
-                </p>
-              </div>
+                <div className="space-y-5">
+                  <h1 className="text-balance text-[2.95rem] font-semibold tracking-tight text-[color:var(--foreground)] sm:text-[4.7rem]">
+                    把普通字，变成
+                    <span className="hero-gradient-text">清楚好抄</span>
+                    的空心字。
+                  </h1>
+                  <p className="max-w-xl text-lg leading-9 text-[color:var(--muted-foreground)]">
+                    先看轮廓，再挑写法。想照着练时，直接切到打印参考页就可以。
+                  </p>
+                </div>
 
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="#workbench"
-                  className="button-pop inline-flex items-center gap-2 rounded-full bg-[color:var(--primary-strong)] px-5 py-3 text-base font-semibold text-white shadow-[0_24px_48px_rgba(98,137,120,0.22)]"
-                >
-                  现在试写
-                  <ArrowRight className="size-5" />
-                </Link>
-                <Link
-                  href="/guides"
-                  className="button-pop inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-base font-semibold text-[color:var(--foreground)] shadow-[0_22px_44px_rgba(130,160,144,0.12)]"
-                >
-                  先看写法指南
-                </Link>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {["课堂标题", "手账栏目", "清爽笔记"].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-white/75 bg-white/72 px-3 py-1.5 text-sm font-medium text-[color:var(--pill-text)]"
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="#workbench"
+                    className="button-pop inline-flex items-center gap-2 rounded-full bg-[color:var(--primary-strong)] px-5 py-3 text-base font-semibold text-white shadow-[0_16px_36px_rgba(98,137,120,0.2)]"
                   >
-                    {item}
-                  </span>
-                ))}
+                    现在试写
+                    <ArrowRight className="size-5" />
+                  </Link>
+                  <Link
+                    href="/guides"
+                    className="button-pop inline-flex items-center gap-2 rounded-full border border-[color:var(--border-soft)] bg-white px-5 py-3 text-base font-semibold text-[color:var(--foreground)]"
+                  >
+                    先看写法指南
+                  </Link>
+                </div>
+
+                <div className="grid gap-3 border-t border-[color:var(--border-soft)] pt-6 sm:grid-cols-3">
+                  {[
+                    { label: "适合场景", value: "标题 / 手账 / 笔记" },
+                    { label: "看什么", value: "轮廓清不清楚" },
+                    { label: "下一步", value: "再决定怎么写" },
+                  ].map((item) => (
+                    <div key={item.label} className="space-y-1">
+                      <p className="text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">{item.label}</p>
+                      <p className="text-sm leading-7 text-[color:var(--muted-foreground)]">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="space-y-4 lg:pl-4">
-              <article className="soft-panel interactive-card overflow-hidden p-4 sm:p-5">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <p className="section-kicker">先看效果</p>
-                    <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[color:var(--foreground)]">
-                      中文空心字参考板
-                    </h2>
-                    <p className="mt-2 max-w-xl text-sm leading-7 text-[color:var(--muted-foreground)]">
-                      先看轮廓是不是清楚，再换成你自己的内容。下面的工作台会同步更新。
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-[color:var(--soft-berry)] px-3 py-1.5 text-sm font-semibold text-[color:var(--primary-deep)]">
-                    {activeHeroStyle.name}
-                  </span>
-                </div>
-
-                <div
-                  className="hero-board mt-5 overflow-hidden rounded-[30px] border border-white/80 p-4 shadow-[0_26px_56px_rgba(129,158,142,0.12)]"
-                  style={{
-                    background: `linear-gradient(145deg, ${activeHeroStyle.background.from} 0%, ${activeHeroStyle.background.via} 54%, ${activeHeroStyle.background.to} 100%)`,
-                  }}
-                >
-                  <OutlinePreviewSvg text={DEFAULT_SAMPLE_TEXT} style={activeHeroStyle} mode="animated" className="w-full" />
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {["轻骨架", "外扩轮廓", "成字轮廓"].map((label) => (
-                    <span
-                      key={label}
-                      className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]"
-                    >
-                      {label}
-                    </span>
+            <div className="border-t border-[color:var(--border-soft)] bg-[linear-gradient(180deg,rgba(255,253,248,0.98),rgba(248,244,235,0.92))] px-5 py-6 sm:px-8 sm:py-8 lg:border-l lg:border-t-0 lg:px-10 lg:py-10">
+              <div className="grid h-full gap-6 xl:grid-cols-[0.22fr_0.78fr] xl:items-center">
+                <div className="flex flex-row flex-wrap gap-2 xl:flex-col xl:gap-3">
+                  {[
+                    { label: "预览样张", value: activeHeroStyle.name },
+                    { label: "看轮廓", value: "别先看颜色" },
+                    { label: "写之前", value: "先判断清不清楚" },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-[20px] border border-[color:var(--border-soft)] bg-white px-4 py-3 xl:px-4 xl:py-4">
+                      <p className="text-[11px] font-semibold tracking-[0.18em] text-[color:var(--primary-strong)]">{item.label}</p>
+                      <p className="mt-1 text-sm leading-6 text-[color:var(--foreground)]">{item.value}</p>
+                    </div>
                   ))}
                 </div>
 
-                <div className="mt-4 rounded-[22px] bg-[color:var(--soft-cream)] px-4 py-4 text-sm leading-7 text-[color:var(--foreground)]">
-                  先把字写小一点，再沿外侧包边，最后把转角修顺，空心字会比一开始就描得很厚更清楚。
-                </div>
-              </article>
+                <article className="overflow-hidden rounded-[34px] border border-[color:var(--border-soft)] bg-white p-4 sm:p-5">
+                  <div
+                    className="hero-board overflow-hidden rounded-[30px] border border-[color:var(--border-soft)] p-4 shadow-[0_16px_40px_rgba(129,158,142,0.08)]"
+                    style={{
+                      background: `linear-gradient(145deg, ${activeHeroStyle.background.from} 0%, ${activeHeroStyle.background.via} 54%, ${activeHeroStyle.background.to} 100%)`,
+                    }}
+                  >
+                    <OutlinePreviewSvg text={DEFAULT_SAMPLE_TEXT} style={activeHeroStyle} mode="final" className="w-full" />
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[color:var(--border-soft)] pt-4">
+                    {["轻骨架", "外扩轮廓", "成字轮廓"].map((label) => (
+                      <span key={label} className="text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+
+                  <p className="mt-4 max-w-2xl text-sm leading-7 text-[color:var(--muted-foreground)]">
+                    先把字写小一点，再沿外侧包边，最后修顺转角，空心字会更清楚。
+                  </p>
+                </article>
+              </div>
             </div>
           </div>
         </div>

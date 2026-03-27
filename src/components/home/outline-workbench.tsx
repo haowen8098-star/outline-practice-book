@@ -187,9 +187,9 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
 
   return (
     <section ref={workbenchRef} id="workbench" className="space-y-8">
-      <div className="section-card overflow-hidden">
-        <div className="grid gap-8 p-5 lg:grid-cols-[0.88fr_1.12fr] lg:p-7">
-          <div className="space-y-6">
+      <div className="overflow-hidden rounded-[42px] border border-[color:var(--border-soft)] bg-[color:var(--surface)] shadow-[var(--shadow-soft)]">
+        <div className="grid gap-0 xl:grid-cols-[340px_minmax(0,1fr)]">
+          <div className="space-y-6 border-b border-[color:var(--border-soft)] px-5 py-6 sm:px-6 sm:py-7 xl:border-b-0 xl:border-r">
             <div className="space-y-2">
               <h2 className="text-balance text-3xl font-semibold tracking-tight text-[color:var(--foreground)] sm:text-4xl">
                 输入文字，直接看空心字轮廓。
@@ -309,9 +309,9 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
             </div>
           </div>
 
-          <div className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+          <div className="space-y-6 px-5 py-6 sm:px-6 sm:py-7">
             <div
-              className="overflow-hidden rounded-[34px] border border-white/80 p-4 shadow-[0_32px_72px_rgba(130,160,143,0.16)]"
+              className="overflow-hidden rounded-[34px] border border-[color:var(--border-soft)] p-4 shadow-[0_20px_48px_rgba(130,160,143,0.08)] sm:p-6"
               style={{
                 background: `linear-gradient(145deg, ${activeStyle.background.from} 0%, ${activeStyle.background.via} 50%, ${activeStyle.background.to} 100%)`,
               }}
@@ -351,7 +351,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
 
               <OutlinePreviewSvg ref={exportTargetRef} text={deferredText} style={activeStyle} paper={paper} className="w-full" />
 
-              <div className="mt-4 space-y-3 rounded-[26px] bg-white/80 p-4">
+              <div className="mt-4 space-y-3 border-t border-[color:var(--border-soft)] pt-4">
                 <div className="flex flex-wrap gap-2">
                   <span className="rounded-full bg-[color:var(--soft-mint)] px-3 py-1 text-xs font-medium text-[color:var(--primary-strong)]">
                     {activeStyle.previewLabel}
@@ -384,9 +384,12 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
               </div>
             </div>
 
-            <div className="soft-panel p-5">
-              <p className="section-kicker">换一组看看</p>
-              <div className="soft-scroll mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible xl:grid-cols-3">
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="section-kicker">换一组看看</p>
+                <p className="text-sm text-[color:var(--muted-foreground)]">先看哪一种最清楚，再决定要不要往下学。</p>
+              </div>
+              <div className="soft-scroll mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible xl:grid-cols-5">
                 {outlineStyles.map((style) => (
                   <div key={style.id} className="min-w-[296px] snap-center md:min-w-0">
                     <StyleCard

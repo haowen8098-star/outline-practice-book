@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/60 bg-white/48">
+    <footer className="border-t border-[color:var(--border-soft)] bg-[#f8f3ea]">
       <div className="page-shell grid gap-8 py-12 md:grid-cols-[1.25fr_0.75fr]">
         <div className="space-y-3">
           <p className="text-sm font-semibold tracking-[0.2em] text-[color:var(--primary-strong)]">空心字练习本</p>
@@ -24,7 +24,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="soft-panel p-5">
+        <div className="rounded-[26px] border border-[color:var(--border-soft)] bg-white px-5 py-5">
           <p className="text-sm font-semibold tracking-[0.18em] text-[color:var(--primary-strong)]">站内入口</p>
           <div className="mt-4 grid gap-3 text-sm text-[color:var(--muted-foreground)]">
             <Link href="/" className="transition-colors hover:text-[color:var(--foreground)]">

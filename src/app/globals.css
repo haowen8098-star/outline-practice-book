@@ -14,12 +14,12 @@
   --soft-berry: #fff0f4;
   --pill-bg: #f2f7f4;
   --pill-text: #547061;
-  --border-soft: rgba(255, 255, 255, 0.85);
-  --surface: rgba(255, 255, 255, 0.8);
-  --surface-strong: rgba(255, 255, 255, 0.92);
+  --border-soft: rgba(78, 96, 87, 0.08);
+  --surface: rgba(255, 253, 248, 0.96);
+  --surface-strong: rgba(255, 255, 252, 0.98);
   --line-soft: rgba(112, 140, 126, 0.12);
-  --shadow-soft: 0 28px 60px rgba(142, 172, 155, 0.12);
-  --shadow-strong: 0 36px 90px rgba(123, 153, 137, 0.18);
+  --shadow-soft: 0 18px 44px rgba(130, 146, 136, 0.08);
+  --shadow-strong: 0 28px 72px rgba(118, 136, 126, 0.12);
 }
 
 @theme inline {
@@ -53,10 +53,10 @@ html {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(180, 224, 202, 0.36), transparent 34%),
-    radial-gradient(circle at top right, rgba(255, 227, 235, 0.36), transparent 28%),
-    radial-gradient(circle at 82% 26%, rgba(255, 238, 197, 0.26), transparent 22%),
-    radial-gradient(circle at bottom right, rgba(210, 224, 255, 0.26), transparent 28%),
+    linear-gradient(180deg, #f5f0e6 0%, #fbf8f2 16%, #fffdf8 56%, #f7f3eb 100%),
+    radial-gradient(circle at top left, rgba(180, 224, 202, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(255, 227, 235, 0.18), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(210, 224, 255, 0.16), transparent 22%),
     var(--background);
   color: var(--foreground);
   font-family:
@@ -94,15 +94,14 @@ button:active {
 
 .page-shell {
   margin-inline: auto;
-  width: min(1180px, calc(100% - 32px));
+  width: calc(100% - clamp(24px, 5vw, 84px));
 }
 
 .section-card {
-  border-radius: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 34px;
+  border: 1px solid var(--border-soft);
   background: var(--surface);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(14px);
 }
 
 .text-balance {
@@ -126,10 +125,10 @@ button:active {
 }
 
 .soft-panel {
-  border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 26px;
+  border: 1px solid rgba(84, 105, 95, 0.08);
   background: var(--surface-strong);
-  box-shadow: 0 22px 52px rgba(130, 160, 144, 0.12);
+  box-shadow: 0 14px 34px rgba(130, 160, 144, 0.08);
 }
 
 .interactive-card {
@@ -143,7 +142,7 @@ button:active {
 
 .interactive-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 24px 58px rgba(130, 160, 144, 0.14);
+  box-shadow: 0 18px 42px rgba(130, 160, 144, 0.1);
 }
 
 .button-pop {
@@ -286,7 +285,7 @@ button:active {
 
 @media (max-width: 767px) {
   .page-shell {
-    width: min(100% - 24px, 1180px);
+    width: calc(100% - 24px);
   }
 
   .section-card {
