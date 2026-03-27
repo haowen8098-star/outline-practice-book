@@ -3,7 +3,8 @@ export type OutlineStyleId =
   | "neat-title"
   | "journal-decor"
   | "chalk-board"
-  | "light-modern";
+  | "light-modern"
+  | "shadow-note";
 
 export type GuideSlug =
   | "outline-basics"
@@ -42,6 +43,12 @@ export interface GlyphPattern {
   scales?: number[];
 }
 
+export interface ShadowSettings {
+  color: string;
+  offsetX: number;
+  offsetY: number;
+}
+
 export interface OutlineStylePreset {
   id: OutlineStyleId;
   name: string;
@@ -58,7 +65,9 @@ export interface OutlineStylePreset {
   letterSpacing: number;
   fontWeight: number;
   fontFamily: string;
+  latinFontFamily?: string;
   renderMode?: "line" | "chars";
+  renderVariant?: "outline" | "shadow";
   glyphPattern?: GlyphPattern;
   capStyle: "round" | "square";
   cornerStyle: "round" | "square";
@@ -66,6 +75,7 @@ export interface OutlineStylePreset {
   outlineColor: string;
   softFillColor: string;
   supportColor: string;
+  shadow?: ShadowSettings;
   background: StyleBackground;
   exportCaption: string;
   hintSentence: string;

@@ -16,6 +16,7 @@ const validStyles = new Set<OutlineStyleId>([
   "journal-decor",
   "chalk-board",
   "light-modern",
+  "shadow-note",
 ]);
 
 const validPapers = new Set<PracticePaperId>(["grid", "dot"]);
@@ -74,6 +75,8 @@ export function getPreviewMetrics(text: string, styleId: OutlineStyleId) {
       ? -7
       : styleId === "light-modern"
         ? 2
+        : styleId === "shadow-note"
+          ? -6
         : styleId === "journal-decor"
           ? -5
           : styleId === "soft-candy"

@@ -18,7 +18,7 @@ function getPatternValue(values: number[] | undefined, index: number, fallback: 
   return values[index % values.length] ?? fallback;
 }
 
-type PreviewMode = "source" | "expand" | "measure" | "final" | "animated";
+type PreviewMode = "source" | "expand" | "measure" | "final" | "animated" | "timeline";
 
 interface OutlinePreviewSvgProps {
   text: string;
@@ -26,11 +26,13 @@ interface OutlinePreviewSvgProps {
   paper?: PracticePaperId;
   mode?: PreviewMode;
   compact?: boolean;
+  visualWeight?: "default" | "hero";
+  animationVariant?: "default" | "solid-to-outline";
   className?: string;
 }
 
 export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProps>(function OutlinePreviewSvg(
-  { text, style, paper = "grid", mode = "final", compact = false, className },
+  { text, style, paper = "grid", mode = "final", compact = false, visualWeight = "default", animationVariant = "default", className },
   ref,
 ) {
   const uniqueId = useId().replace(/:/g, "");
@@ -39,28 +41,156 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
   const { positions, fontSize } = getPreviewMetrics(text, style.id);
   const strokeLinejoin = style.cornerStyle === "round" ? "round" : "miter";
   const strokeLinecap = style.capStyle === "round" ? "round" : "square";
-  const viewHeight = compact ? 280 : 340;
-  const boardHeight = compact ? 256 : 312;
   const isAnimated = mode === "animated";
+  const isGsapTimeline = mode === "timeline";
+  const hasAnimationLayers = isAnimated || isGsapTimeline;
+  const isHeroWeight = visualWeight === "hero";
+  const useSolidToOutline = hasAnimationLayers && animationVariant === "solid-to-outline";
+  const viewHeight = compact ? 280 : isHeroWeight ? 432 : 340;
+  const boardHeight = compact ? 256 : isHeroWeight ? 388 : 312;
   const finalStrokeWidth = Math.max(3, style.strokeWidth * (compact ? 0.35 : 0.4));
   const expandStrokeWidth = Math.max(finalStrokeWidth + 1.1, style.strokeWidth * 0.52);
   const showMeasurementLines = mode === "measure";
-  const showFinalOutline = mode === "final" || mode === "measure" || isAnimated;
-  const showSourceFill = mode === "source" || isAnimated;
-  const showExpandStroke = mode === "expand" || isAnimated;
+  const showFinalOutline = mode === "final" || mode === "measure" || hasAnimationLayers;
+  const showSourceFill = mode === "source" || hasAnimationLayers;
+  const showExpandStroke = (mode === "expand" || isAnimated) && !useSolidToOutline;
   const fontFamily = style.fontFamily || cjkFontStack;
-  const renderByChar = style.renderMode === "chars";
+  const latinFontFamily = style.latinFontFamily || fontFamily;
+  const isShadowVariant = style.renderVariant === "shadow";
+  const renderByChar = style.renderMode === "chars" || (isHeroWeight && hasAnimationLayers && !isShadowVariant);
+  const shadowColor = style.shadow?.color ?? "#95684b";
+  const shadowOffsetX = style.shadow?.offsetX ?? 6;
+  const shadowOffsetY = style.shadow?.offsetY ?? 7;
+  const displayFontSize = isHeroWeight ? Math.min(184, Math.max(126, fontSize * 1.52)) : fontSize;
+  const displayLetterSpacing = isHeroWeight ? style.letterSpacing + 18 : style.letterSpacing;
+  const displayLineGap = isHeroWeight ? displayFontSize * 1.26 : fontSize * 1.05;
+  const displayCenterY = compact ? 160 : isHeroWeight ? 198 : 160;
+  const displayPositions = positions.map((line, index) => ({
+    ...line,
+    lineIndex: index,
+    y: displayCenterY - (displayLineGap * Math.max(0, positions.length - 1)) / 2 + index * displayLineGap,
+  }));
 
   const renderLine = (
-    line: { text: string; x: number; y: number },
+    line: { text: string; x: number; y: number; lineIndex?: number },
     layer: "source" | "expand" | "final" | "measure",
   ) => {
     const common = {
       fontFamily,
       fontWeight: style.fontWeight,
-      fontSize,
-      letterSpacing: style.letterSpacing,
+      fontSize: displayFontSize,
+      letterSpacing: displayLetterSpacing,
     };
+
+    const animationClass =
+      hasAnimationLayers
+        ? layer === "source"
+          ? `preview-sequence preview-sequence--source${useSolidToOutline ? " preview-sequence--solid-source" : ""}`
+          : layer === "expand"
+            ? "preview-sequence preview-sequence--expand"
+            : layer === "final"
+              ? `preview-sequence preview-sequence--outline${useSolidToOutline ? " preview-sequence--solid-outline" : ""}`
+              : undefined
+        : undefined;
+
+    if (isShadowVariant && !renderByChar) {
+      const shadowTransform = `translate(${shadowOffsetX} ${shadowOffsetY})`;
+
+      if (layer === "source") {
+        return (
+          <text
+            key={`${layer}-${line.text}-${line.y}`}
+            x={line.x}
+            y={line.y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            {...common}
+            fill="#7d7b74"
+            opacity={hasAnimationLayers ? undefined : 0.18}
+            className={animationClass}
+          >
+            {line.text}
+          </text>
+        );
+      }
+
+      if (layer === "expand") {
+        return (
+          <text
+            key={`${layer}-${line.text}-${line.y}`}
+            x={line.x}
+            y={line.y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            {...common}
+            fill={shadowColor}
+            opacity={hasAnimationLayers ? undefined : 0.28}
+            transform={shadowTransform}
+            className={animationClass}
+          >
+            {line.text}
+          </text>
+        );
+      }
+
+      if (layer === "measure") {
+        return [
+          <text
+            key={`${layer}-shadow-${line.text}-${line.y}`}
+            x={line.x}
+            y={line.y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            {...common}
+            fill={shadowColor}
+            opacity={0.24}
+            transform={shadowTransform}
+          >
+            {line.text}
+          </text>,
+          <text
+            key={`${layer}-fill-${line.text}-${line.y}`}
+            x={line.x}
+            y={line.y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            {...common}
+            fill={style.outlineColor}
+            opacity={0.26}
+          >
+            {line.text}
+          </text>,
+        ];
+      }
+
+      return [
+        <text
+          key={`${layer}-shadow-${line.text}-${line.y}`}
+          x={line.x}
+          y={line.y}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          {...common}
+          fill={shadowColor}
+          transform={shadowTransform}
+          className={animationClass}
+        >
+          {line.text}
+        </text>,
+        <text
+          key={`${layer}-fill-${line.text}-${line.y}`}
+          x={line.x}
+          y={line.y}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          {...common}
+          fill={style.outlineColor}
+          className={animationClass}
+        >
+          {line.text}
+        </text>,
+      ];
+    }
 
     if (!renderByChar) {
       return (
@@ -71,7 +201,7 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
           textAnchor="middle"
           dominantBaseline="middle"
           {...common}
-          fill={layer === "source" ? "#6d7471" : "transparent"}
+          fill={layer === "source" ? (useSolidToOutline ? style.outlineColor : "#6d7471") : "transparent"}
           opacity={
             layer === "source" && !isAnimated
               ? 0.16
@@ -104,17 +234,7 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
           strokeDasharray={layer === "expand" ? "14 12" : layer === "final" && isAnimated ? "1400" : undefined}
           strokeDashoffset={layer === "expand" && isAnimated ? 140 : layer === "final" && isAnimated ? 1400 : undefined}
           paintOrder={layer === "source" ? undefined : "stroke"}
-          className={
-            isAnimated
-              ? layer === "source"
-                ? "preview-sequence preview-sequence--source"
-                : layer === "expand"
-                  ? "preview-sequence preview-sequence--expand"
-                  : layer === "final"
-                    ? "preview-sequence preview-sequence--outline"
-                    : undefined
-              : undefined
-          }
+          className={animationClass}
         >
           {line.text}
         </text>
@@ -123,7 +243,7 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
 
     const chars = [...line.text];
     const widths = chars.map((char) => getGlyphAdvance(char, fontSize));
-    const totalWidth = widths.reduce((sum, width) => sum + width, 0) + style.letterSpacing * Math.max(0, chars.length - 1);
+    const totalWidth = widths.reduce((sum, width) => sum + width, 0) + displayLetterSpacing * Math.max(0, chars.length - 1);
     let cursor = line.x - totalWidth / 2;
 
     return chars.map((char, index) => {
@@ -132,68 +252,139 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
       const centerY = line.y + getPatternValue(style.glyphPattern?.yOffsets, index, 0);
       const rotation = getPatternValue(style.glyphPattern?.rotations, index, 0);
       const scale = getPatternValue(style.glyphPattern?.scales, index, 1);
-      cursor += width + style.letterSpacing;
+      cursor += width + displayLetterSpacing;
 
       return (
-        <text
-          key={`${layer}-${line.text}-${line.y}-${index}`}
-          x={centerX}
-          y={centerY}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          {...common}
-          fill={layer === "source" ? "#6d7471" : "transparent"}
-          opacity={
-            layer === "source" && !isAnimated
-              ? 0.16
-              : layer === "expand" && !isAnimated
-                ? 0.8
-                : layer === "measure"
-                  ? 0.16
-                  : undefined
-          }
-          stroke={
-            layer === "expand"
-              ? style.supportColor
-              : layer === "final"
-                ? style.outlineColor
-                : layer === "measure"
-                  ? style.supportColor
-                  : undefined
-          }
-          strokeWidth={
-            layer === "expand"
-              ? expandStrokeWidth
-              : layer === "final"
-                ? finalStrokeWidth
-                : layer === "measure"
-                  ? Math.max(2, style.innerStrokeWidth - 1)
-                  : undefined
-          }
-          strokeLinejoin={layer === "source" ? undefined : strokeLinejoin}
-          strokeLinecap={layer === "source" ? undefined : strokeLinecap}
-          strokeDasharray={layer === "expand" ? "14 12" : layer === "final" && isAnimated ? "1400" : undefined}
-          strokeDashoffset={layer === "expand" && isAnimated ? 140 : layer === "final" && isAnimated ? 1400 : undefined}
-          paintOrder={layer === "source" ? undefined : "stroke"}
-          className={
-            isAnimated
-              ? layer === "source"
-                ? "preview-sequence preview-sequence--source"
-                : layer === "expand"
-                  ? "preview-sequence preview-sequence--expand"
-                  : layer === "final"
-                    ? "preview-sequence preview-sequence--outline"
+        isShadowVariant ? (
+          [
+            layer === "source" ? (
+              <text
+                key={`${layer}-fill-${line.text}-${line.y}-${index}`}
+                x={centerX}
+                y={centerY}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                {...common}
+                fontFamily={/[A-Za-z0-9]/.test(char) ? latinFontFamily : fontFamily}
+                fill="#7d7b74"
+                opacity={isAnimated ? undefined : 0.18}
+                className={animationClass}
+                data-line-index={line.lineIndex}
+                data-char-index={index}
+                data-char-count={chars.length}
+                transform={
+                  rotation || scale !== 1
+                    ? `translate(${centerX} ${centerY}) rotate(${rotation}) scale(${scale}) translate(${-centerX} ${-centerY})`
                     : undefined
-              : undefined
-          }
-          transform={
-            rotation || scale !== 1
-              ? `translate(${centerX} ${centerY}) rotate(${rotation}) scale(${scale}) translate(${-centerX} ${-centerY})`
-              : undefined
-          }
-        >
-          {char}
-        </text>
+                }
+              >
+                {char}
+              </text>
+            ) : null,
+            layer === "expand" || layer === "measure" || layer === "final" ? (
+              <text
+                key={`${layer}-shadow-${line.text}-${line.y}-${index}`}
+                x={centerX}
+                y={centerY}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                {...common}
+                fontFamily={/[A-Za-z0-9]/.test(char) ? latinFontFamily : fontFamily}
+                fill={shadowColor}
+            opacity={layer === "expand" && !hasAnimationLayers ? 0.28 : layer === "measure" ? 0.24 : undefined}
+                className={animationClass}
+                data-line-index={line.lineIndex}
+                data-char-index={index}
+                data-char-count={chars.length}
+                transform={`translate(${centerX + shadowOffsetX} ${centerY + shadowOffsetY}) rotate(${rotation}) scale(${scale}) translate(${-centerX} ${-centerY})`}
+              >
+                {char}
+              </text>
+            ) : null,
+            layer === "measure" || layer === "final" ? (
+              <text
+                key={`${layer}-fill-${line.text}-${line.y}-${index}`}
+                x={centerX}
+                y={centerY}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                {...common}
+                fontFamily={/[A-Za-z0-9]/.test(char) ? latinFontFamily : fontFamily}
+                fill={style.outlineColor}
+                stroke={style.outlineColor}
+                strokeWidth={1.05}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                opacity={layer === "measure" ? 0.26 : undefined}
+                className={animationClass}
+                data-line-index={line.lineIndex}
+                data-char-index={index}
+                data-char-count={chars.length}
+                transform={
+                  rotation || scale !== 1
+                    ? `translate(${centerX} ${centerY}) rotate(${rotation}) scale(${scale}) translate(${-centerX} ${-centerY})`
+                    : undefined
+                }
+              >
+                {char}
+              </text>
+            ) : null,
+          ]
+        ) : (
+          <text
+            key={`${layer}-${line.text}-${line.y}-${index}`}
+            x={centerX}
+            y={centerY}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            {...common}
+            fontFamily={/[A-Za-z0-9]/.test(char) ? latinFontFamily : fontFamily}
+            fill={layer === "source" ? (useSolidToOutline ? style.outlineColor : "#6d7471") : "transparent"}
+            opacity={
+              layer === "source" && !isAnimated
+                ? 0.16
+                : layer === "expand" && !isAnimated
+                  ? 0.8
+                  : layer === "measure"
+                    ? 0.16
+                    : undefined
+            }
+            stroke={
+              layer === "expand"
+                ? style.supportColor
+                : layer === "final"
+                  ? style.outlineColor
+                  : layer === "measure"
+                    ? style.supportColor
+                    : undefined
+            }
+            strokeWidth={
+              layer === "expand"
+                ? expandStrokeWidth
+                : layer === "final"
+                  ? finalStrokeWidth
+                  : layer === "measure"
+                    ? Math.max(2, style.innerStrokeWidth - 1)
+                    : undefined
+            }
+            strokeLinejoin={layer === "source" ? undefined : strokeLinejoin}
+            strokeLinecap={layer === "source" ? undefined : strokeLinecap}
+            strokeDasharray={layer === "expand" ? "14 12" : layer === "final" && isAnimated ? "1400" : undefined}
+            strokeDashoffset={layer === "expand" && isAnimated ? 140 : layer === "final" && isAnimated ? 1400 : undefined}
+            paintOrder={layer === "source" ? undefined : "stroke"}
+            className={animationClass}
+            data-line-index={line.lineIndex}
+            data-char-index={index}
+            data-char-count={chars.length}
+            transform={
+              rotation || scale !== 1
+                ? `translate(${centerX} ${centerY}) rotate(${rotation}) scale(${scale}) translate(${-centerX} ${-centerY})`
+                : undefined
+            }
+          >
+            {char}
+          </text>
+        )
       );
     });
   };
@@ -204,7 +395,7 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
       viewBox={`0 0 760 ${viewHeight}`}
       role="img"
       aria-label={`${style.name}预览`}
-      className={`${isAnimated ? "outline-preview-svg outline-preview-svg--animated" : "outline-preview-svg"} ${className ?? ""}`.trim()}
+      className={`${isAnimated ? "outline-preview-svg outline-preview-svg--animated" : "outline-preview-svg"} ${isGsapTimeline ? "outline-preview-svg--timeline" : ""} ${useSolidToOutline ? "outline-preview-svg--solid-to-outline" : ""} ${className ?? ""}`.trim()}
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
@@ -245,20 +436,20 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
         </>
       ) : null}
 
-      {showSourceFill ? positions.flatMap((line) => renderLine(line, "source")) : null}
+      {showSourceFill ? displayPositions.flatMap((line) => renderLine(line, "source")) : null}
 
       {showExpandStroke
-        ? positions.flatMap((line) => renderLine(line, "expand"))
+        ? displayPositions.flatMap((line) => renderLine(line, "expand"))
         : null}
 
       {showFinalOutline && isAnimated
-        ? positions.flatMap((line) => renderLine(line, "final"))
+        ? displayPositions.flatMap((line) => renderLine(line, "final"))
         : showFinalOutline
-          ? positions.flatMap((line) => renderLine(line, "final"))
+          ? displayPositions.flatMap((line) => renderLine(line, "final"))
           : null}
 
       {mode === "measure"
-        ? positions.flatMap((line) => renderLine(line, "measure"))
+        ? displayPositions.flatMap((line) => renderLine(line, "measure"))
         : null}
     </svg>
   );

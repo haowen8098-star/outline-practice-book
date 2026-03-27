@@ -58,7 +58,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
   const deferredText = useDeferredValue(previewText);
   const activeStyle = useMemo(() => getStyleById(activeStyleId), [activeStyleId]);
   const prioritizedStyles = useMemo(() => {
-    const priorityOrder = ["light-modern", "neat-title", "soft-candy", "journal-decor", "chalk-board"] as const;
+    const priorityOrder = ["light-modern", "neat-title", "soft-candy", "journal-decor", "shadow-note", "chalk-board"] as const;
     return [...outlineStyles].sort((left, right) => priorityOrder.indexOf(left.id) - priorityOrder.indexOf(right.id));
   }, []);
   const printHref = `/print?${buildSearchParams({
@@ -178,7 +178,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
 
   function handleSelectStyle(styleId: SearchState["style"]) {
     setActiveStyleId(styleId);
-    detailRef.current?.scrollIntoView({
+    previewCardRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
@@ -326,7 +326,6 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                 <div>
                   <p className="section-kicker">当前预览</p>
                   <h3 className="mt-1 text-2xl font-semibold text-[color:var(--foreground)]">{activeStyle.name}</h3>
-                  <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">{activeStyle.bestFor}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
@@ -374,7 +373,6 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                     </span>
                   ))}
                 </div>
-                <p className="text-sm leading-7 text-[color:var(--foreground)]">{activeStyle.hintSentence}</p>
                 <p
                   className={cn(
                     "rounded-[18px] px-4 py-3 text-sm leading-7",
@@ -395,9 +393,9 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                 <p className="section-kicker">换一组看看</p>
                 <p className="text-sm text-[color:var(--muted-foreground)]">先看哪一种最清楚，再决定要不要往下学。</p>
               </div>
-              <div className="soft-scroll mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible xl:grid-cols-5">
+              <div className="soft-scroll mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible xl:grid-cols-3 2xl:grid-cols-6">
                 {prioritizedStyles.map((style) => (
-                  <div key={style.id} className="min-w-[calc(100vw-72px)] snap-center md:min-w-0 xl:min-w-0">
+                  <div key={style.id} className="w-[272px] shrink-0 snap-center md:w-auto md:min-w-0">
                     <StyleCard
                       text={deferredText}
                       style={style}

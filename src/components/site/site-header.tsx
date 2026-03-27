@@ -4,10 +4,10 @@ import { navItems, cn } from "@/lib/site";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-[color:var(--border-soft)] bg-[color:var(--background)]/92 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 bg-[color:var(--background)]/82 backdrop-blur-xl">
       <div className="page-shell flex items-center justify-between gap-4 py-4">
         <Link href="/" className="group button-pop flex items-center gap-3">
-          <span className="flex size-11 items-center justify-center rounded-2xl border border-[color:var(--border-soft)] bg-white text-lg shadow-[0_12px_30px_rgba(105,142,125,0.08)] transition-transform duration-300 group-hover:-translate-y-0.5">
+          <span className="flex size-11 items-center justify-center rounded-2xl border border-white/70 bg-white/88 text-lg shadow-[0_12px_30px_rgba(105,142,125,0.08)] transition-transform duration-300 group-hover:-translate-y-0.5">
             〇
           </span>
           <div>

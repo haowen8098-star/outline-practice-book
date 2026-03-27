@@ -17,7 +17,7 @@ export function StyleCard({ text, style, active, onSelect }: StyleCardProps) {
   return (
     <article
       className={cn(
-        "group interactive-card flex h-full flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/90 shadow-[0_22px_52px_rgba(126,160,143,0.1)] transition duration-300",
+        "group interactive-card flex h-full flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/90 shadow-[0_18px_42px_rgba(126,160,143,0.1)] transition duration-300",
         active
           ? "border-[color:var(--primary-strong)] shadow-[0_28px_66px_rgba(98,137,120,0.18)]"
           : "hover:-translate-y-1 hover:shadow-[0_28px_66px_rgba(126,160,143,0.18)]",
@@ -41,10 +41,9 @@ export function StyleCard({ text, style, active, onSelect }: StyleCardProps) {
           <OutlinePreviewSvg text={text} style={style} compact className="w-full" />
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 px-5 pt-4">
-          <div className="space-y-2">
+        <div className="flex flex-1 flex-col gap-4 px-5 py-4">
+          <div className="space-y-1">
             <h3 className="text-2xl font-semibold tracking-tight text-[color:var(--foreground)]">{style.name}</h3>
-            <p className="text-sm leading-7 text-[color:var(--muted-foreground)]">{style.shortDescription}</p>
           </div>
 
           <div className="rounded-[22px] bg-[color:var(--soft-cream)] px-4 py-3 text-sm leading-7 text-[color:var(--muted-foreground)]">
@@ -68,8 +67,7 @@ export function StyleCard({ text, style, active, onSelect }: StyleCardProps) {
         </div>
       </button>
 
-      <div className="mt-auto flex items-center justify-between gap-3 px-5 pb-5 pt-4 text-sm">
-        <span className="text-[color:var(--muted-foreground)]">{style.hintSentence}</span>
+        <div className="mt-auto flex items-center justify-end gap-3 px-5 pb-5 pt-1 text-sm">
         <Link href={getGuideHref(style.guideSlug)} className="button-pop shrink-0 font-semibold text-[color:var(--primary-strong)] underline-offset-4 hover:underline">
           看写法
         </Link>
