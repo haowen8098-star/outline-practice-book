@@ -6,13 +6,10 @@ import {
   Heart,
   NotebookPen,
   PanelsTopLeft,
-  PenTool,
-  Printer,
-  Sparkles,
 } from "lucide-react";
 
 import { guidePages } from "@/content/guides";
-import { faqItems, outlineStyles, scenarioRecommendations } from "@/content/styles";
+import { faqItems, scenarioRecommendations } from "@/content/styles";
 import { getGuideHref, getStyleById } from "@/lib/content";
 import { DEFAULT_SAMPLE_TEXT } from "@/lib/outline";
 import type { SearchState } from "@/types/site";
@@ -28,24 +25,6 @@ const iconMap = {
   decor: FileText,
 };
 
-const quickWins = [
-  {
-    title: "5 套中文风格",
-    description: "同一段字可以直接比较 5 种写法，先挑最适合你这一页用途的那一种。",
-    icon: Sparkles,
-  },
-  {
-    title: "4 步照着下笔",
-    description: "从轻骨架、外扩轮廓到统一线宽和修角留白，一步一步讲给你看。",
-    icon: PenTool,
-  },
-  {
-    title: "打印后就能练",
-    description: "当前风格可以直接导出 PNG，也能切到 A4 临摹参考页继续写。",
-    icon: Printer,
-  },
-];
-
 export function HomePageContent({ initialState }: { initialState: SearchState }) {
   const activeHeroStyle = getStyleById(initialState.style);
 
@@ -56,25 +35,19 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
           <div className="grid items-start gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10">
             <div className="space-y-7">
               <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-[color:var(--soft-blue)] px-4 py-2 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
-                  普通字 → 空心字 → 手写教学
-                </span>
                 <span className="rounded-full bg-[color:var(--soft-mint)] px-4 py-2 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
-                  中文优先
-                </span>
-                <span className="rounded-full bg-[color:var(--soft-cream)] px-4 py-2 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
-                  可打印临摹
+                  中文空心字参考
                 </span>
               </div>
 
               <div className="space-y-5">
                 <h1 className="text-balance text-[2.9rem] font-semibold tracking-tight text-[color:var(--foreground)] sm:text-6xl">
-                  把普通文字，变成真正能照着写的
-                  <span className="hero-gradient-text">中文空心字参考</span>
-                  。
+                  把普通字，变成
+                  <span className="hero-gradient-text">清楚好抄</span>
+                  的空心字。
                 </h1>
                 <p className="max-w-2xl text-lg leading-9 text-[color:var(--muted-foreground)]">
-                  打开就能输入中文，立刻比较 5 种空心字风格。旁边会同步给出手写步骤、临摹提示和打印参考，方便你直接挑一种顺手的写法开始练。
+                  输入文字后，先看轮廓效果，再挑适合标题、手账或笔记的写法。想照着练时，直接打印参考页就可以。
                 </p>
               </div>
 
@@ -95,7 +68,7 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {["课堂标题", "手账栏目", "清爽笔记", "手抄报大字", "日记装饰字"].map((item) => (
+                {["课堂标题", "手账栏目", "清爽笔记"].map((item) => (
                   <span
                     key={item}
                     className="rounded-full border border-white/75 bg-white/72 px-3 py-1.5 text-sm font-medium text-[color:var(--pill-text)]"
@@ -104,34 +77,18 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
                   </span>
                 ))}
               </div>
-
-              <div className="grid gap-3 sm:grid-cols-3">
-                {quickWins.map((item) => {
-                  const Icon = item.icon;
-
-                  return (
-                    <article key={item.title} className="soft-panel interactive-card p-4">
-                      <span className="flex size-11 items-center justify-center rounded-2xl bg-[color:var(--soft-mint)] text-[color:var(--primary-strong)]">
-                        <Icon className="size-5" />
-                      </span>
-                      <h2 className="mt-4 text-lg font-semibold text-[color:var(--foreground)]">{item.title}</h2>
-                      <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">{item.description}</p>
-                    </article>
-                  );
-                })}
-              </div>
             </div>
 
             <div className="space-y-4 lg:pl-4">
               <article className="soft-panel interactive-card overflow-hidden p-4 sm:p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="section-kicker">先看参考板</p>
+                    <p className="section-kicker">先看效果</p>
                     <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[color:var(--foreground)]">
                       中文空心字参考板
                     </h2>
                     <p className="mt-2 max-w-xl text-sm leading-7 text-[color:var(--muted-foreground)]">
-                      先看看版面节奏，再把下面的字换成你自己的内容。风格一切换，参考布局和写法提示都会一起更新。
+                      先看轮廓是不是清楚，再换成你自己的内容。下面的工作台会同步更新。
                     </p>
                   </div>
                   <span className="rounded-full bg-[color:var(--soft-berry)] px-3 py-1.5 text-sm font-semibold text-[color:var(--primary-deep)]">
@@ -149,7 +106,7 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {["轻骨架", "外扩轮廓", "修角成字"].map((label) => (
+                  {["轻骨架", "外扩轮廓", "成字轮廓"].map((label) => (
                     <span
                       key={label}
                       className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]"
@@ -159,86 +116,12 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
                   ))}
                 </div>
 
-                <div className="mt-4 grid gap-3 md:grid-cols-3">
-                  {[
-                    {
-                      title: "先轻写骨架",
-                      body: "起稿写小一点，给外轮廓和留白预留空间。",
-                    },
-                    {
-                      title: "再慢慢包边",
-                      body: "保持距离一致，结构会比直接描边更稳。",
-                    },
-                    {
-                      title: "最后修转角",
-                      body: "空心字的精致感，往往来自收角和呼吸感。",
-                    },
-                  ].map((tip) => (
-                    <div key={tip.title} className="rounded-[22px] bg-[color:var(--soft-cream)] px-4 py-4">
-                      <p className="text-sm font-semibold text-[color:var(--foreground)]">{tip.title}</p>
-                      <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">{tip.body}</p>
-                    </div>
-                  ))}
+                <div className="mt-4 rounded-[22px] bg-[color:var(--soft-cream)] px-4 py-4 text-sm leading-7 text-[color:var(--foreground)]">
+                  先把字写小一点，再沿外侧包边，最后把转角修顺，空心字会比一开始就描得很厚更清楚。
                 </div>
               </article>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <article className="soft-panel interactive-card overflow-hidden p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="section-kicker">STEP 1</p>
-                      <h3 className="mt-1 text-lg font-semibold text-[color:var(--foreground)]">先定位原字结构</h3>
-                    </div>
-                    <span className="rounded-full bg-[color:var(--soft-mint)] px-3 py-1 text-xs font-semibold text-[color:var(--primary-strong)]">
-                      骨架稿
-                    </span>
-                  </div>
-                  <div className="mt-4 overflow-hidden rounded-[24px] bg-[color:var(--soft-blue)]">
-                    <OutlinePreviewSvg text={DEFAULT_SAMPLE_TEXT} style={outlineStyles[1]} compact mode="source" className="w-full" />
-                  </div>
-                </article>
-
-                <article className="soft-panel interactive-card overflow-hidden p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="section-kicker">STEP 2</p>
-                      <h3 className="mt-1 text-lg font-semibold text-[color:var(--foreground)]">沿外侧包出轮廓</h3>
-                    </div>
-                    <span className="rounded-full bg-[color:var(--soft-pink)] px-3 py-1 text-xs font-semibold text-[color:var(--primary-deep)]">
-                      外扩示意
-                    </span>
-                  </div>
-                  <div className="mt-4 overflow-hidden rounded-[24px] bg-[color:var(--soft-cream)]">
-                    <OutlinePreviewSvg text={DEFAULT_SAMPLE_TEXT} style={outlineStyles[0]} compact mode="expand" className="w-full" />
-                  </div>
-                </article>
-              </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="page-shell">
-        <div className="grid gap-4 md:grid-cols-3">
-          {[
-            {
-              title: "中文结构优先",
-              description: "偏旁、上下左右结构和字心留白都会一起照顾到，写起来更稳，也更容易看清。",
-            },
-            {
-              title: "边看边学怎么写",
-              description: "每种风格旁边都配四步图示和下笔提醒，不让你只看得懂效果、却不知道怎么落笔。",
-            },
-            {
-              title: "导出后还能继续练",
-              description: "可以把当前预览保存为 PNG，或者切到打印页，直接生成更适合照着写的参考布局。",
-            },
-          ].map((item) => (
-            <article key={item.title} className="soft-panel interactive-card p-6">
-              <h2 className="text-xl font-semibold text-[color:var(--foreground)]">{item.title}</h2>
-              <p className="mt-3 text-sm leading-7 text-[color:var(--muted-foreground)]">{item.description}</p>
-            </article>
-          ))}
         </div>
       </section>
 

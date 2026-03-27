@@ -56,7 +56,7 @@ export function splitDisplayLines(text: string) {
 
   const line = lines[0];
   const length = weightedLineLength(line);
-  if (length <= 10) {
+  if (length <= 8.4) {
     return [line];
   }
 
@@ -70,9 +70,9 @@ export function getPreviewMetrics(text: string, styleId: OutlineStyleId) {
   const lineCount = lines.length;
   const longestLine = Math.max(...lines.map(weightedLineLength));
   const styleBonus =
-    styleId === "chalk-board" ? -6 : styleId === "light-modern" ? 6 : styleId === "journal-decor" ? -2 : 0;
-  const fontSize = Math.max(74, Math.min(154, 154 - longestLine * 6 - (lineCount - 1) * 18 + styleBonus));
-  const lineGap = fontSize * 0.92;
+    styleId === "chalk-board" ? -4 : styleId === "light-modern" ? 4 : styleId === "journal-decor" ? -2 : 0;
+  const fontSize = Math.max(64, Math.min(140, 146 - longestLine * 8.4 - (lineCount - 1) * 24 + styleBonus));
+  const lineGap = fontSize * 1.04;
   const totalHeight = lineGap * (lineCount - 1);
   const startY = 160 - totalHeight / 2;
   const positions = lines.map((line, index) => ({

@@ -7,10 +7,8 @@ import {
   Eraser,
   ExternalLink,
   Link2,
-  NotebookText,
   Printer,
   RefreshCcw,
-  Sparkles,
 } from "lucide-react";
 import {
   startTransition,
@@ -192,26 +190,13 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
       <div className="section-card overflow-hidden">
         <div className="grid gap-8 p-5 lg:grid-cols-[0.88fr_1.12fr] lg:p-7">
           <div className="space-y-6">
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-[color:var(--soft-mint)] px-3 py-1 text-xs font-semibold text-[color:var(--primary-strong)]">
-                  适合中文
-                </span>
-                <span className="rounded-full bg-[color:var(--soft-blue)] px-3 py-1 text-xs font-semibold text-[color:var(--primary-strong)]">
-                  实时预览
-                </span>
-                <span className="rounded-full bg-[color:var(--soft-pink)] px-3 py-1 text-xs font-semibold text-[color:var(--primary-deep)]">
-                  写法图示
-                </span>
-              </div>
-              <div>
-                <h2 className="text-balance text-3xl font-semibold tracking-tight text-[color:var(--foreground)] sm:text-4xl">
-                  先输入你想写的字，再挑最适合抄到本子上的空心字风格。
-                </h2>
-                <p className="mt-3 max-w-xl text-base leading-8 text-[color:var(--muted-foreground)]">
-                  输入后先看版面，再看步骤和提示，最后决定要保存图片还是直接打印参考页，整套练习会更顺手。
-                </p>
-              </div>
+            <div className="space-y-2">
+              <h2 className="text-balance text-3xl font-semibold tracking-tight text-[color:var(--foreground)] sm:text-4xl">
+                输入文字，直接看空心字轮廓。
+              </h2>
+              <p className="max-w-xl text-base leading-8 text-[color:var(--muted-foreground)]">
+                先挑一款顺眼的，再往下看怎么写。
+              </p>
             </div>
 
             <div className="paper-panel soft-panel p-5">
@@ -222,16 +207,11 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                       输入文字
                     </label>
                     <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                      支持中文、英文、数字和常见符号，最多两行。真正写在本子上时，短标题通常会更好看。
+                      支持中文、英文和常见符号，最多两行。短一点更适合照着写。
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-2 text-xs font-semibold text-[color:var(--pill-text)]">
-                    <span className="rounded-full bg-white px-3 py-1.5 shadow-[0_10px_24px_rgba(134,163,148,0.08)]">
-                      {visibleCharCount} 字
-                    </span>
-                    <span className="rounded-full bg-white px-3 py-1.5 shadow-[0_10px_24px_rgba(134,163,148,0.08)]">
-                      {inputLineCount} / 2 行
-                    </span>
+                  <div className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-[color:var(--pill-text)] shadow-[0_10px_24px_rgba(134,163,148,0.08)]">
+                    {visibleCharCount} 字 · {inputLineCount} / 2 行
                   </div>
                 </div>
 
@@ -244,7 +224,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                 />
 
                 <div className="mt-4 flex flex-wrap items-center gap-3">
-                  {exampleTexts.map((example, index) => (
+                  {exampleTexts.slice(0, 3).map((example, index) => (
                     <button
                       key={example}
                       type="button"
@@ -285,13 +265,13 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
 
                 {isEmptyInput ? (
                   <p className="mt-4 rounded-[20px] bg-[color:var(--soft-blue)] px-4 py-3 text-sm leading-7 text-[color:var(--foreground)]">
-                    还没输入时，先用示例字帮你看看版面。你一输入自己的文字，右边会立刻更新。
+                    先用示例看版面，你一输入就会立刻更新。
                   </p>
                 ) : null}
 
                 {warning ? (
                   <p className="mt-4 rounded-[20px] bg-[color:var(--soft-pink)] px-4 py-3 text-sm leading-7 text-[color:var(--foreground)]">
-                    这段字已经比较长了。预览会自动缩小字号，真正在本子上写时，建议拆成两行，或者先写主标题再写副标题。
+                    这段字已经偏长了。想写得更清楚的话，建议拆成两行。
                   </p>
                 ) : null}
               </div>
@@ -302,7 +282,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                 <div>
                   <p className="section-kicker">打印纸样</p>
                   <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                    现在先选好你要导出的练习底纸，打印页会沿用这个设置。
+                    打印参考页会沿用这里的底纸样式。
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -338,9 +318,9 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
             >
               <div className="flex flex-wrap items-start justify-between gap-3 px-2 pb-3">
                 <div>
-                  <p className="section-kicker">大图参考</p>
+                  <p className="section-kicker">当前预览</p>
                   <h3 className="mt-1 text-2xl font-semibold text-[color:var(--foreground)]">{activeStyle.name}</h3>
-                  <p className="mt-2 max-w-2xl text-sm leading-7 text-[color:var(--muted-foreground)]">{activeStyle.tone}</p>
+                  <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">{activeStyle.bestFor}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
@@ -349,7 +329,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                     className="button-pop inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[color:var(--foreground)] shadow-[0_18px_32px_rgba(123,147,135,0.14)]"
                   >
                     <Link2 className="size-4" />
-                    复制链接
+                    复制
                   </button>
                   <button
                     type="button"
@@ -357,83 +337,55 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                     className="button-pop inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[color:var(--foreground)] shadow-[0_18px_32px_rgba(123,147,135,0.14)]"
                   >
                     <Download className="size-4" />
-                    下载 PNG
+                    下载
                   </button>
                   <Link
                     href={printHref}
                     className="button-pop inline-flex items-center gap-2 rounded-full bg-[color:var(--primary-strong)] px-4 py-2 text-sm font-semibold text-white shadow-[0_18px_32px_rgba(98,137,120,0.24)]"
                   >
                     <Printer className="size-4" />
-                    打印参考页
+                    打印
                   </Link>
                 </div>
               </div>
 
               <OutlinePreviewSvg ref={exportTargetRef} text={deferredText} style={activeStyle} paper={paper} className="w-full" />
 
-              <div className="mt-4 grid gap-4 rounded-[26px] bg-white/78 p-5 md:grid-cols-[1.2fr_0.8fr]">
-                <div>
-                  <p className="text-sm font-semibold text-[color:var(--foreground)]">这组写法更适合什么场景？</p>
-                  <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">{activeStyle.bestFor}</p>
-                  <p className="mt-3 rounded-[18px] bg-[color:var(--soft-cream)] px-4 py-3 text-sm leading-7 text-[color:var(--foreground)]">
-                    {activeStyle.exportCaption}
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <span className="rounded-full bg-[color:var(--soft-mint)] px-3 py-1 text-xs font-medium text-[color:var(--primary-strong)]">
-                      {activeStyle.previewLabel}
+              <div className="mt-4 space-y-3 rounded-[26px] bg-white/80 p-4">
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-full bg-[color:var(--soft-mint)] px-3 py-1 text-xs font-medium text-[color:var(--primary-strong)]">
+                    {activeStyle.previewLabel}
+                  </span>
+                  <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[color:var(--pill-text)]">
+                    {activeStyle.difficulty}
+                  </span>
+                  <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[color:var(--pill-text)]">
+                    {activeStyle.recommendedLength}
+                  </span>
+                  {activeStyle.scenarioTags.slice(0, 2).map((tag) => (
+                    <span key={tag} className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[color:var(--pill-text)]">
+                      {tag}
                     </span>
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[color:var(--pill-text)]">
-                      {activeStyle.difficulty}
-                    </span>
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[color:var(--pill-text)]">
-                      {activeStyle.recommendedLength}
-                    </span>
-                  </div>
+                  ))}
                 </div>
-
-                <div className="space-y-3 rounded-[22px] bg-white px-4 py-4">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-[color:var(--primary-strong)]">
-                    <NotebookText className="size-4" />
-                    实用提醒
-                  </div>
-                  <p className="text-sm leading-7 text-[color:var(--muted-foreground)]">{activeStyle.hintSentence}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {activeStyle.scenarioTags.map((tag) => (
-                      <span key={tag} className="rounded-full bg-[color:var(--soft-mint)] px-3 py-1 text-xs font-medium text-[color:var(--primary-strong)]">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  {status ? (
-                    <p
-                      className={cn(
-                        "rounded-[18px] px-4 py-3 text-sm leading-7",
-                        statusTone === "success"
-                          ? "bg-[color:var(--soft-mint)] text-[color:var(--primary-deep)]"
-                          : statusTone === "warning"
-                            ? "bg-[color:var(--soft-pink)] text-[color:var(--foreground)]"
-                            : "bg-[color:var(--soft-cream)] text-[color:var(--foreground)]",
-                      )}
-                    >
-                      {status}
-                    </p>
-                  ) : (
-                    <p className="rounded-[18px] bg-[color:var(--soft-cream)] px-4 py-3 text-sm leading-7 text-[color:var(--foreground)]">
-                      可以先复制链接，再决定要导出 PNG 还是直接打印参考页。
-                    </p>
+                <p className="text-sm leading-7 text-[color:var(--foreground)]">{activeStyle.hintSentence}</p>
+                <p
+                  className={cn(
+                    "rounded-[18px] px-4 py-3 text-sm leading-7",
+                    statusTone === "success"
+                      ? "bg-[color:var(--soft-mint)] text-[color:var(--primary-deep)]"
+                      : statusTone === "warning"
+                        ? "bg-[color:var(--soft-pink)] text-[color:var(--foreground)]"
+                        : "bg-[color:var(--soft-cream)] text-[color:var(--foreground)]",
                   )}
-                </div>
+                >
+                  {status ?? activeStyle.exportCaption}
+                </p>
               </div>
             </div>
 
             <div className="soft-panel p-5">
-              <div className="flex items-center gap-2 text-sm font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
-                <Sparkles className="size-4" />
-                快速比较 5 种写法
-              </div>
-              <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                先看哪一种最适合你的场景，再点开下方风格详解，写起来会更顺。
-              </p>
+              <p className="section-kicker">换一组看看</p>
               <div className="soft-scroll mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible xl:grid-cols-3">
                 {outlineStyles.map((style) => (
                   <div key={style.id} className="min-w-[296px] snap-center md:min-w-0">
