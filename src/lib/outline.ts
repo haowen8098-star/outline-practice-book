@@ -1,6 +1,6 @@
 import type { OutlineStyleId, PracticePaperId, SearchState } from "@/types/site";
 
-export const DEFAULT_SAMPLE_TEXT = "宝宝手帐空心字";
+export const DEFAULT_SAMPLE_TEXT = "我爱你";
 export const SOFT_WARNING_LIMIT = 20;
 export const MAX_LINE_COUNT = 2;
 

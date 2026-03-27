@@ -24,7 +24,7 @@ const iconMap = {
   decor: FileText,
 };
 
-const HERO_SAMPLE_TEXT = "宝宝手帐空心字";
+const HERO_SAMPLE_TEXT = "我爱你";
 const HERO_STYLE_ID = "light-modern" as const;
 
 export function HomePageContent({ initialState }: { initialState: SearchState }) {
