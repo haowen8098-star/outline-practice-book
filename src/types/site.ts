@@ -36,6 +36,12 @@ export interface StyleBackground {
   tape: string;
 }
 
+export interface GlyphPattern {
+  rotations?: number[];
+  yOffsets?: number[];
+  scales?: number[];
+}
+
 export interface OutlineStylePreset {
   id: OutlineStyleId;
   name: string;
@@ -51,6 +57,9 @@ export interface OutlineStylePreset {
   innerStrokeWidth: number;
   letterSpacing: number;
   fontWeight: number;
+  fontFamily: string;
+  renderMode?: "line" | "chars";
+  glyphPattern?: GlyphPattern;
   capStyle: "round" | "square";
   cornerStyle: "round" | "square";
   accentColor: string;

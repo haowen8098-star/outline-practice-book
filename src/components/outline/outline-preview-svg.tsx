@@ -6,6 +6,18 @@ import type { OutlineStylePreset, PracticePaperId } from "@/types/site";
 const cjkFontStack =
   "\"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", \"Source Han Sans SC\", sans-serif";
 
+function getGlyphAdvance(char: string, fontSize: number) {
+  if (/\s/.test(char)) return fontSize * 0.34;
+  if (/[A-Za-z0-9]/.test(char)) return fontSize * 0.62;
+  if (/[，。、《》！？：；、“”‘’（）()【】,.!?;:]/.test(char)) return fontSize * 0.48;
+  return fontSize * 0.92;
+}
+
+function getPatternValue(values: number[] | undefined, index: number, fallback: number) {
+  if (!values || values.length === 0) return fallback;
+  return values[index % values.length] ?? fallback;
+}
+
 type PreviewMode = "source" | "expand" | "measure" | "final" | "animated";
 
 interface OutlinePreviewSvgProps {
@@ -36,6 +48,155 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
   const showFinalOutline = mode === "final" || mode === "measure" || isAnimated;
   const showSourceFill = mode === "source" || isAnimated;
   const showExpandStroke = mode === "expand" || isAnimated;
+  const fontFamily = style.fontFamily || cjkFontStack;
+  const renderByChar = style.renderMode === "chars";
+
+  const renderLine = (
+    line: { text: string; x: number; y: number },
+    layer: "source" | "expand" | "final" | "measure",
+  ) => {
+    const common = {
+      fontFamily,
+      fontWeight: style.fontWeight,
+      fontSize,
+      letterSpacing: style.letterSpacing,
+    };
+
+    if (!renderByChar) {
+      return (
+        <text
+          key={`${layer}-${line.text}-${line.y}`}
+          x={line.x}
+          y={line.y}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          {...common}
+          fill={layer === "source" ? "#6d7471" : "transparent"}
+          opacity={
+            layer === "source" && !isAnimated
+              ? 0.16
+              : layer === "expand" && !isAnimated
+                ? 0.8
+                : layer === "measure"
+                  ? 0.16
+                  : undefined
+          }
+          stroke={
+            layer === "expand"
+              ? style.supportColor
+              : layer === "final"
+                ? style.outlineColor
+                : layer === "measure"
+                  ? style.supportColor
+                  : undefined
+          }
+          strokeWidth={
+            layer === "expand"
+              ? expandStrokeWidth
+              : layer === "final"
+                ? finalStrokeWidth
+                : layer === "measure"
+                  ? Math.max(2, style.innerStrokeWidth - 1)
+                  : undefined
+          }
+          strokeLinejoin={layer === "source" ? undefined : strokeLinejoin}
+          strokeLinecap={layer === "source" ? undefined : strokeLinecap}
+          strokeDasharray={layer === "expand" ? "14 12" : layer === "final" && isAnimated ? "1400" : undefined}
+          strokeDashoffset={layer === "expand" && isAnimated ? 140 : layer === "final" && isAnimated ? 1400 : undefined}
+          paintOrder={layer === "source" ? undefined : "stroke"}
+          className={
+            isAnimated
+              ? layer === "source"
+                ? "preview-sequence preview-sequence--source"
+                : layer === "expand"
+                  ? "preview-sequence preview-sequence--expand"
+                  : layer === "final"
+                    ? "preview-sequence preview-sequence--outline"
+                    : undefined
+              : undefined
+          }
+        >
+          {line.text}
+        </text>
+      );
+    }
+
+    const chars = [...line.text];
+    const widths = chars.map((char) => getGlyphAdvance(char, fontSize));
+    const totalWidth = widths.reduce((sum, width) => sum + width, 0) + style.letterSpacing * Math.max(0, chars.length - 1);
+    let cursor = line.x - totalWidth / 2;
+
+    return chars.map((char, index) => {
+      const width = widths[index];
+      const centerX = cursor + width / 2;
+      const centerY = line.y + getPatternValue(style.glyphPattern?.yOffsets, index, 0);
+      const rotation = getPatternValue(style.glyphPattern?.rotations, index, 0);
+      const scale = getPatternValue(style.glyphPattern?.scales, index, 1);
+      cursor += width + style.letterSpacing;
+
+      return (
+        <text
+          key={`${layer}-${line.text}-${line.y}-${index}`}
+          x={centerX}
+          y={centerY}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          {...common}
+          fill={layer === "source" ? "#6d7471" : "transparent"}
+          opacity={
+            layer === "source" && !isAnimated
+              ? 0.16
+              : layer === "expand" && !isAnimated
+                ? 0.8
+                : layer === "measure"
+                  ? 0.16
+                  : undefined
+          }
+          stroke={
+            layer === "expand"
+              ? style.supportColor
+              : layer === "final"
+                ? style.outlineColor
+                : layer === "measure"
+                  ? style.supportColor
+                  : undefined
+          }
+          strokeWidth={
+            layer === "expand"
+              ? expandStrokeWidth
+              : layer === "final"
+                ? finalStrokeWidth
+                : layer === "measure"
+                  ? Math.max(2, style.innerStrokeWidth - 1)
+                  : undefined
+          }
+          strokeLinejoin={layer === "source" ? undefined : strokeLinejoin}
+          strokeLinecap={layer === "source" ? undefined : strokeLinecap}
+          strokeDasharray={layer === "expand" ? "14 12" : layer === "final" && isAnimated ? "1400" : undefined}
+          strokeDashoffset={layer === "expand" && isAnimated ? 140 : layer === "final" && isAnimated ? 1400 : undefined}
+          paintOrder={layer === "source" ? undefined : "stroke"}
+          className={
+            isAnimated
+              ? layer === "source"
+                ? "preview-sequence preview-sequence--source"
+                : layer === "expand"
+                  ? "preview-sequence preview-sequence--expand"
+                  : layer === "final"
+                    ? "preview-sequence preview-sequence--outline"
+                    : undefined
+              : undefined
+          }
+          transform={
+            rotation || scale !== 1
+              ? `translate(${centerX} ${centerY}) rotate(${rotation}) scale(${scale}) translate(${-centerX} ${-centerY})`
+              : undefined
+          }
+        >
+          {char}
+        </text>
+      );
+    });
+  };
 
   return (
     <svg
@@ -84,125 +245,20 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
         </>
       ) : null}
 
-      {positions.map((line) => (
-        <text
-          key={`source-${line.text}-${line.y}`}
-          x={line.x}
-          y={line.y}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fontFamily={cjkFontStack}
-          fontWeight={style.fontWeight}
-          fontSize={fontSize}
-          letterSpacing={style.letterSpacing}
-          fill={showSourceFill ? "#6d7471" : "transparent"}
-          opacity={showSourceFill && !isAnimated ? 0.16 : undefined}
-          className={isAnimated ? "preview-sequence preview-sequence--source" : undefined}
-        >
-          {line.text}
-        </text>
-      ))}
+      {showSourceFill ? positions.flatMap((line) => renderLine(line, "source")) : null}
 
       {showExpandStroke
-        ? positions.map((line) => (
-            <text
-              key={`expand-${line.text}-${line.y}`}
-              x={line.x}
-              y={line.y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontFamily={cjkFontStack}
-              fontWeight={style.fontWeight}
-              fontSize={fontSize}
-              letterSpacing={style.letterSpacing}
-              fill="transparent"
-              stroke={style.supportColor}
-              strokeWidth={expandStrokeWidth}
-              strokeLinejoin={strokeLinejoin}
-              strokeLinecap={strokeLinecap}
-              strokeDasharray="14 12"
-              strokeDashoffset={isAnimated ? 140 : undefined}
-              opacity={isAnimated ? undefined : "0.8"}
-              paintOrder="stroke"
-              className={isAnimated ? "preview-sequence preview-sequence--expand" : undefined}
-            >
-              {line.text}
-            </text>
-          ))
+        ? positions.flatMap((line) => renderLine(line, "expand"))
         : null}
 
       {showFinalOutline && isAnimated
-        ? positions.map((line) => (
-            <text
-              key={`final-outline-${line.text}-${line.y}`}
-              x={line.x}
-              y={line.y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontFamily={cjkFontStack}
-              fontWeight={style.fontWeight}
-              fontSize={fontSize}
-              letterSpacing={style.letterSpacing}
-              fill="transparent"
-              stroke={style.outlineColor}
-              strokeWidth={finalStrokeWidth}
-              strokeLinejoin={strokeLinejoin}
-              strokeLinecap={strokeLinecap}
-              strokeDasharray="1400"
-              strokeDashoffset="1400"
-              paintOrder="stroke"
-              className="preview-sequence preview-sequence--outline"
-            >
-              {line.text}
-            </text>
-          ))
+        ? positions.flatMap((line) => renderLine(line, "final"))
         : showFinalOutline
-          ? positions.map((line) => (
-            <text
-              key={`final-${line.text}-${line.y}`}
-              x={line.x}
-              y={line.y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontFamily={cjkFontStack}
-              fontWeight={style.fontWeight}
-              fontSize={fontSize}
-              letterSpacing={style.letterSpacing}
-              fill="transparent"
-              stroke={style.outlineColor}
-              strokeWidth={finalStrokeWidth}
-              strokeLinejoin={strokeLinejoin}
-              strokeLinecap={strokeLinecap}
-              paintOrder="stroke"
-            >
-              {line.text}
-            </text>
-          ))
+          ? positions.flatMap((line) => renderLine(line, "final"))
           : null}
 
       {mode === "measure"
-        ? positions.map((line) => (
-            <text
-              key={`measure-${line.text}-${line.y}`}
-              x={line.x}
-              y={line.y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontFamily={cjkFontStack}
-              fontWeight={style.fontWeight}
-              fontSize={fontSize}
-              letterSpacing={style.letterSpacing}
-              fill="transparent"
-              stroke={style.supportColor}
-              strokeWidth={Math.max(2, style.innerStrokeWidth - 1)}
-              strokeLinejoin={strokeLinejoin}
-              strokeLinecap={strokeLinecap}
-              opacity="0.16"
-              paintOrder="stroke"
-            >
-              {line.text}
-            </text>
-          ))
+        ? positions.flatMap((line) => renderLine(line, "measure"))
         : null}
     </svg>
   );
