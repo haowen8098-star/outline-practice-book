@@ -10,6 +10,7 @@ export type GuideSlug =
   | "outline-basics"
   | "title-outline"
   | "journal-outline"
+  | "shadow-note"
   | "blackboard-outline";
 
 export type PracticePaperId = "grid" | "dot";
@@ -109,9 +110,12 @@ export interface GuidePage {
   description: string;
   intro: string;
   problem: string;
+  featuredAnswer: string;
+  keywords: string[];
   scenes: string[];
   steps: GuideStep[];
   mistakes: string[];
+  faqs: FaqItem[];
   closingNote: string;
   recommendedStyle: OutlineStyleId;
   howToName: string;

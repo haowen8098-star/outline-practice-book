@@ -42,14 +42,16 @@ interface MetadataInput {
   title: string;
   description: string;
   path: string;
+  keywords?: string[];
 }
 
-export function createPageMetadata({ title, description, path }: MetadataInput): Metadata {
+export function createPageMetadata({ title, description, path, keywords }: MetadataInput): Metadata {
   const canonical = absoluteUrl(path);
 
   return {
     title,
     description,
+    keywords,
     alternates: {
       canonical,
     },

@@ -6,9 +6,11 @@ import { getStyleById } from "@/lib/content";
 import { createPageMetadata } from "@/lib/site";
 
 export const metadata = createPageMetadata({
-  title: "空心字写法指南",
-  description: "按场景浏览中文空心字写法：入门、课堂标题、手账装饰和黑板报大标题，各自都有适合普通人的步骤拆解。",
+  title: "手账空心字写法指南",
+  description:
+    "按手账场景浏览空心字教程：新手入门、工整标题、可爱页签、阴影字和封面大标题，每一页都能直接照着练。",
   path: "/guides",
+  keywords: ["手账空心字", "手账标题字", "手账阴影字", "可爱空心字", "手账写法指南"],
 });
 
 export default function GuidesIndexPage() {
@@ -16,12 +18,12 @@ export default function GuidesIndexPage() {
     <div className="page-shell space-y-8 pb-20 pt-8">
       <section className="section-card overflow-hidden px-5 py-8 sm:px-8 sm:py-10">
         <div className="max-w-3xl space-y-4">
-          <p className="text-sm font-semibold tracking-[0.18em] text-[color:var(--primary-strong)]">中文写法指南</p>
+          <p className="text-sm font-semibold tracking-[0.18em] text-[color:var(--primary-strong)]">手账写法指南</p>
           <h1 className="text-balance text-4xl font-semibold tracking-tight text-[color:var(--foreground)] sm:text-5xl">
-            想把某一类空心字写稳，先看场景对应的写法拆解。
+            想写日记标题、月计划页签或封面大字，先挑最像你本子的那一页。
           </h1>
           <p className="text-lg leading-8 text-[color:var(--muted-foreground)]">
-            每一页都把适合场景、起笔顺序和最容易写歪的地方整理好了，翻到哪一页都能直接照着练。
+            每一页都把适合页面、下笔顺序、常见错误和小女生手账里最常搜的问题整理好了，点开就能直接照着练。
           </p>
         </div>
       </section>

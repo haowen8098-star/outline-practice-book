@@ -187,7 +187,7 @@ export const outlineStyles: OutlineStylePreset[] = [
     bestFor: "便签标题、清单页签、手账分区",
     difficulty: "中等",
     recommendedLength: "4 到 10 字最灵动",
-    guideSlug: "journal-outline",
+    guideSlug: "shadow-note",
     strokeWidth: 12.4,
     innerStrokeWidth: 4.6,
     letterSpacing: 14,

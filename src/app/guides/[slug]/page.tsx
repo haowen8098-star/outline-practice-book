@@ -8,7 +8,7 @@ import { exampleTexts } from "@/content/styles";
 import { OutlinePreviewSvg } from "@/components/outline/outline-preview-svg";
 import { StructuredData } from "@/components/site/structured-data";
 import { getStyleById } from "@/lib/content";
-import { buildHowToJsonLd, createPageMetadata } from "@/lib/site";
+import { buildFaqJsonLd, buildHowToJsonLd, createPageMetadata } from "@/lib/site";
 
 export function generateStaticParams() {
   return guidePages.map((guide) => ({
@@ -36,6 +36,7 @@ export async function generateMetadata({
     title: guide.title,
     description: guide.description,
     path: `/guides/${guide.slug}`,
+    keywords: guide.keywords,
   });
 }
 
@@ -54,11 +55,13 @@ export default async function GuideDetailPage({
   const recommendedStyle = getStyleById(guide.recommendedStyle);
   const previewText =
     guide.slug === "title-outline"
-      ? "课堂重点标题"
+      ? "今日清单标题"
       : guide.slug === "journal-outline"
         ? "今日手账页签"
+        : guide.slug === "shadow-note"
+          ? "月计划封面"
         : guide.slug === "blackboard-outline"
-          ? "班级活动主题"
+          ? "本月主题封面"
           : exampleTexts[0];
   const backHref = `/?style=${recommendedStyle.id}&text=${encodeURIComponent(previewText)}&paper=grid`;
 
@@ -72,6 +75,7 @@ export default async function GuideDetailPage({
           guide.steps.map((step) => `${step.title}：${step.body}`),
         )}
       />
+      <StructuredData data={buildFaqJsonLd(guide.faqs)} />
 
       <section className="section-card overflow-hidden px-5 py-8 sm:px-8 sm:py-10">
         <Link href="/guides" className="inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--primary-strong)]">
@@ -106,7 +110,12 @@ export default async function GuideDetailPage({
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.04fr_0.96fr]">
+      <section className="grid gap-6 xl:grid-cols-3">
+        <article className="section-card p-6">
+          <p className="text-sm font-semibold tracking-[0.18em] text-[color:var(--primary-strong)]">先看结论</p>
+          <p className="mt-4 text-base leading-8 text-[color:var(--foreground)]">{guide.featuredAnswer}</p>
+        </article>
+
         <article className="section-card p-6">
           <p className="text-sm font-semibold tracking-[0.18em] text-[color:var(--primary-strong)]">为什么会写歪</p>
           <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">{guide.problem}</p>
@@ -151,6 +160,18 @@ export default async function GuideDetailPage({
         <p className="mt-5 rounded-[22px] bg-white px-5 py-4 text-sm leading-7 text-[color:var(--foreground)] shadow-[0_18px_36px_rgba(130,160,144,0.1)]">
           {guide.closingNote}
         </p>
+      </section>
+
+      <section className="section-card p-5 sm:p-6">
+        <p className="text-sm font-semibold tracking-[0.18em] text-[color:var(--primary-strong)]">常见问题</p>
+        <div className="mt-5 grid gap-4 lg:grid-cols-3">
+          {guide.faqs.map((faq) => (
+            <article key={faq.question} className="rounded-[24px] bg-white p-5 shadow-[0_18px_36px_rgba(130,160,144,0.1)]">
+              <h2 className="text-lg font-semibold tracking-tight text-[color:var(--foreground)]">{faq.question}</h2>
+              <p className="mt-3 text-sm leading-7 text-[color:var(--muted-foreground)]">{faq.answer}</p>
+            </article>
+          ))}
+        </div>
       </section>
     </div>
   );
