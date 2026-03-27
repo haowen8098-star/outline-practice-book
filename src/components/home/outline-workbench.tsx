@@ -44,6 +44,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
   const pathname = usePathname();
   const workbenchRef = useRef<HTMLElement>(null);
   const detailRef = useRef<HTMLElement>(null);
+  const previewCardRef = useRef<HTMLDivElement>(null);
   const exportTargetRef = useRef<SVGSVGElement>(null);
   const [textInput, setTextInput] = useState(initialState.text);
   const [activeStyleId, setActiveStyleId] = useState(initialState.style);
@@ -85,15 +86,15 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
   }, [activeStyleId, paper, pathname, previewText]);
 
   useEffect(() => {
-    const node = workbenchRef.current;
+    const node = previewCardRef.current;
     if (!node) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setShowMobileBar(entry.isIntersecting);
+        setShowMobileBar(!entry.isIntersecting);
       },
       {
-        threshold: 0.12,
+        threshold: 0.18,
       },
     );
 
@@ -190,10 +191,10 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
   }
 
   return (
-    <section ref={workbenchRef} id="workbench" className="space-y-8">
+    <section ref={workbenchRef} id="workbench" className="scroll-mt-24 space-y-8 sm:scroll-mt-28">
       <div className="overflow-hidden rounded-[42px] border border-[color:var(--border-soft)] bg-[color:var(--surface)] shadow-[var(--shadow-soft)]">
         <div className="grid gap-0 xl:grid-cols-[340px_minmax(0,1fr)]">
-          <div className="space-y-6 border-b border-[color:var(--border-soft)] px-5 py-6 sm:px-6 sm:py-7 xl:border-b-0 xl:border-r">
+          <div className="order-2 space-y-6 border-b border-[color:var(--border-soft)] px-5 py-6 sm:px-6 sm:py-7 xl:order-1 xl:border-b-0 xl:border-r">
             <div className="space-y-2">
               <h2 className="text-balance text-3xl font-semibold tracking-tight text-[color:var(--foreground)] sm:text-4xl">
                 输入文字，直接看空心字轮廓。
@@ -313,8 +314,9 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
             </div>
           </div>
 
-          <div className="space-y-6 px-5 py-6 sm:px-6 sm:py-7">
+          <div className="order-1 space-y-6 px-5 py-6 sm:px-6 sm:py-7 xl:order-2">
             <div
+              ref={previewCardRef}
               className="overflow-hidden rounded-[34px] border border-[color:var(--border-soft)] p-4 shadow-[0_20px_48px_rgba(130,160,143,0.08)] sm:p-6"
               style={{
                 background: `linear-gradient(145deg, ${activeStyle.background.from} 0%, ${activeStyle.background.via} 50%, ${activeStyle.background.to} 100%)`,
@@ -395,7 +397,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
               </div>
               <div className="soft-scroll mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible xl:grid-cols-5">
                 {prioritizedStyles.map((style) => (
-                  <div key={style.id} className="min-w-[296px] snap-center md:min-w-0">
+                  <div key={style.id} className="min-w-[calc(100vw-72px)] snap-center md:min-w-0 xl:min-w-0">
                     <StyleCard
                       text={deferredText}
                       style={style}
