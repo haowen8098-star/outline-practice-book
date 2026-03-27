@@ -150,7 +150,7 @@ button:active {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, transparent 0, transparent calc(42% - 1px), rgba(112, 140, 126, 0.08) calc(42% - 1px), rgba(112, 140, 126, 0.08) 42%, transparent 42%),
+    radial-gradient(circle at 34% 44%, rgba(193, 224, 210, 0.14), transparent 25%),
     linear-gradient(180deg, rgba(255,255,255,0.15), transparent 36%);
   pointer-events: none;
 }
@@ -194,6 +194,11 @@ button:active {
 
 .hero-preview-svg {
   animation: hero-preview-float 7.2s ease-in-out infinite;
+}
+
+.outline-preview-svg--timeline.hero-preview-svg,
+.outline-preview-svg--timeline {
+  animation: none;
 }
 
 .soft-panel {

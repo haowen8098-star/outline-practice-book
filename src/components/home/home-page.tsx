@@ -34,14 +34,14 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
     <div className="space-y-12 pb-24 pt-6 sm:space-y-14">
       <section className="page-shell">
         <div className="hero-stage overflow-hidden px-6 py-8 sm:px-10 sm:py-10 xl:px-12 xl:py-12">
-          <div className="grid items-center gap-8 xl:grid-cols-[0.62fr_1.38fr] xl:gap-5">
-            <div className="space-y-7 xl:ml-auto xl:max-w-[34rem] xl:pr-5 xl:pb-8">
+          <div className="grid items-center gap-8 xl:grid-cols-[0.72fr_1.28fr] xl:gap-2 2xl:grid-cols-[0.7fr_1.3fr]">
+            <div className="space-y-7 xl:max-w-[38rem] xl:pl-8 xl:pr-2 xl:pb-8 2xl:pl-12">
               <span className="inline-flex rounded-full bg-[color:var(--soft-mint)] px-4 py-2 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
                 中文空心字参考
               </span>
 
               <div className="space-y-5">
-                <h1 className="max-w-[10.8ch] text-[clamp(3.05rem,4.85vw,5.15rem)] font-semibold leading-[0.92] tracking-[-0.072em] text-[color:var(--foreground)]">
+                <h1 className="max-w-[11.4ch] text-[clamp(3.05rem,4.55vw,5.1rem)] font-semibold leading-[0.92] tracking-[-0.072em] text-[color:var(--foreground)]">
                   <span className="block whitespace-nowrap">轻松改写</span>
                   <span className="block whitespace-nowrap">
                     手抄<span className="hero-gradient-text">空心字。</span>
@@ -66,7 +66,7 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
               </div>
             </div>
 
-            <div className="hero-visual-shell w-full xl:-ml-6">
+            <div className="hero-visual-shell w-full xl:-ml-10 2xl:-ml-12">
               <div
                 className="hero-board hero-board--stage overflow-hidden rounded-[38px] border border-white/70 p-4 sm:p-5 lg:p-6"
                 style={{
