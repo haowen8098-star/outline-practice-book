@@ -30,8 +30,8 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
   const viewHeight = compact ? 280 : 340;
   const boardHeight = compact ? 256 : 312;
   const isAnimated = mode === "animated";
-  const finalStrokeWidth = Math.max(3.5, style.strokeWidth * (compact ? 0.42 : 0.48));
-  const expandStrokeWidth = Math.max(finalStrokeWidth + 1.5, style.strokeWidth * 0.66);
+  const finalStrokeWidth = Math.max(3, style.strokeWidth * (compact ? 0.35 : 0.4));
+  const expandStrokeWidth = Math.max(finalStrokeWidth + 1.1, style.strokeWidth * 0.52);
   const showMeasurementLines = mode === "measure";
   const showFinalOutline = mode === "final" || mode === "measure" || isAnimated;
   const showSourceFill = mode === "source" || isAnimated;
@@ -96,7 +96,7 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
           fontSize={fontSize}
           letterSpacing={style.letterSpacing}
           fill={showSourceFill ? "#6d7471" : "transparent"}
-          opacity={showSourceFill && !isAnimated ? 0.18 : undefined}
+          opacity={showSourceFill && !isAnimated ? 0.16 : undefined}
           className={isAnimated ? "preview-sequence preview-sequence--source" : undefined}
         >
           {line.text}

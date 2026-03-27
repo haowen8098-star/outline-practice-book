@@ -11,7 +11,6 @@ import {
 import { guidePages } from "@/content/guides";
 import { faqItems, scenarioRecommendations } from "@/content/styles";
 import { getGuideHref, getStyleById } from "@/lib/content";
-import { DEFAULT_SAMPLE_TEXT } from "@/lib/outline";
 import type { SearchState } from "@/types/site";
 
 import { OutlinePreviewSvg } from "../outline/outline-preview-svg";
@@ -25,8 +24,11 @@ const iconMap = {
   decor: FileText,
 };
 
+const HERO_SAMPLE_TEXT = "宝宝手帐空心字";
+const HERO_STYLE_ID = "light-modern" as const;
+
 export function HomePageContent({ initialState }: { initialState: SearchState }) {
-  const activeHeroStyle = getStyleById(initialState.style);
+  const activeHeroStyle = getStyleById(HERO_STYLE_ID);
 
   return (
     <div className="space-y-12 pb-24 pt-6 sm:space-y-14">
@@ -103,7 +105,7 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
                       background: `linear-gradient(145deg, ${activeHeroStyle.background.from} 0%, ${activeHeroStyle.background.via} 54%, ${activeHeroStyle.background.to} 100%)`,
                     }}
                   >
-                    <OutlinePreviewSvg text={DEFAULT_SAMPLE_TEXT} style={activeHeroStyle} mode="final" className="w-full" />
+                    <OutlinePreviewSvg text={HERO_SAMPLE_TEXT} style={activeHeroStyle} mode="animated" className="w-full" />
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[color:var(--border-soft)] pt-4">
