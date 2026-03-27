@@ -6,7 +6,7 @@ export const MAX_LINE_COUNT = 2;
 
 export const DEFAULT_SEARCH_STATE: SearchState = {
   text: DEFAULT_SAMPLE_TEXT,
-  style: "soft-candy",
+  style: "light-modern",
   paper: "grid",
 };
 

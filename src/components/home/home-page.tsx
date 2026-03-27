@@ -33,7 +33,7 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
       <section className="page-shell">
         <div className="overflow-hidden rounded-[42px] border border-[color:var(--border-soft)] bg-[color:var(--surface)] shadow-[var(--shadow-strong)]">
           <div className="grid gap-0 lg:grid-cols-[0.82fr_1.18fr]">
-            <div className="px-6 py-8 sm:px-10 sm:py-10 lg:px-12 lg:py-12">
+            <div className="order-2 px-6 py-8 sm:px-10 sm:py-10 lg:order-1 lg:px-12 lg:py-12">
               <div className="space-y-6">
                 <span className="inline-flex rounded-full bg-[color:var(--soft-mint)] px-4 py-2 text-xs font-semibold tracking-[0.16em] text-[color:var(--primary-strong)]">
                   中文空心字参考
@@ -81,7 +81,7 @@ export function HomePageContent({ initialState }: { initialState: SearchState })
               </div>
             </div>
 
-            <div className="border-t border-[color:var(--border-soft)] bg-[linear-gradient(180deg,rgba(255,253,248,0.98),rgba(248,244,235,0.92))] px-5 py-6 sm:px-8 sm:py-8 lg:border-l lg:border-t-0 lg:px-10 lg:py-10">
+            <div className="order-1 border-b border-[color:var(--border-soft)] bg-[linear-gradient(180deg,rgba(255,253,248,0.98),rgba(248,244,235,0.92))] px-5 py-6 sm:px-8 sm:py-8 lg:order-2 lg:border-b-0 lg:border-l lg:border-t-0 lg:px-10 lg:py-10">
               <div className="grid h-full gap-6 xl:grid-cols-[0.22fr_0.78fr] xl:items-center">
                 <div className="flex flex-row flex-wrap gap-2 xl:flex-col xl:gap-3">
                   {[

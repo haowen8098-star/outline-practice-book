@@ -56,6 +56,10 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
   const previewText = textInput.trim() ? readSearchState({ text: textInput }).text : DEFAULT_SAMPLE_TEXT;
   const deferredText = useDeferredValue(previewText);
   const activeStyle = useMemo(() => getStyleById(activeStyleId), [activeStyleId]);
+  const prioritizedStyles = useMemo(() => {
+    const priorityOrder = ["light-modern", "neat-title", "soft-candy", "journal-decor", "chalk-board"] as const;
+    return [...outlineStyles].sort((left, right) => priorityOrder.indexOf(left.id) - priorityOrder.indexOf(right.id));
+  }, []);
   const printHref = `/print?${buildSearchParams({
     text: previewText,
     style: activeStyleId,
@@ -390,7 +394,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                 <p className="text-sm text-[color:var(--muted-foreground)]">先看哪一种最清楚，再决定要不要往下学。</p>
               </div>
               <div className="soft-scroll mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible xl:grid-cols-5">
-                {outlineStyles.map((style) => (
+                {prioritizedStyles.map((style) => (
                   <div key={style.id} className="min-w-[296px] snap-center md:min-w-0">
                     <StyleCard
                       text={deferredText}
