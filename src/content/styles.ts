@@ -1,7 +1,7 @@
 import type { FaqItem, OutlineStylePreset, PracticePaperOption, ScenarioRecommendation } from "@/types/site";
 
 export const exampleTexts = [
-  "宝宝手帐空心字",
+  "我爱你",
   "手账标题练习",
   "春日学习清单",
   "数学笔记重点",
