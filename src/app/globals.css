@@ -75,6 +75,7 @@ body {
     "Source Han Sans SC",
     sans-serif;
   line-height: 1.5;
+  overflow-x: clip;
 }
 
 a {
@@ -243,6 +244,8 @@ button:active {
 
 .outline-preview-svg {
   overflow: visible;
+  display: block;
+  max-width: 100%;
 }
 
 .outline-preview-svg--animated .preview-sequence--source {

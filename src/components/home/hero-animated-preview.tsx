@@ -17,6 +17,7 @@ interface HeroAnimatedPreviewProps {
 
 export function HeroAnimatedPreview({ text, style }: HeroAnimatedPreviewProps) {
   const scopeRef = useRef<HTMLDivElement>(null);
+  const speedMultiplier = 1.2;
 
   useGSAP(
     () => {
@@ -41,17 +42,35 @@ export function HeroAnimatedPreview({ text, style }: HeroAnimatedPreviewProps) {
           const getLineIndex = (node: SVGElement) => Number(node.dataset.lineIndex ?? 0);
           const getCharIndex = (node: SVGElement) => Number(node.dataset.charIndex ?? 0);
           const getCharCount = (node: SVGElement) => Number(node.dataset.charCount ?? 1);
-          const getAssembleX = (node: SVGElement) => {
+          const getCenteredIndex = (node: SVGElement) => {
             const count = getCharCount(node);
-            const centeredIndex = getCharIndex(node) - (count - 1) / 2;
-            return centeredIndex * 58;
+            return getCharIndex(node) - (count - 1) / 2;
           };
-          const getAssembleY = (node: SVGElement) => (getLineIndex(node) === 0 ? -96 : 96);
-          const getOutlineY = (node: SVGElement) => (getLineIndex(node) === 0 ? -44 : 44);
+          const getAssembleX = (node: SVGElement) => {
+            const centeredIndex = getCenteredIndex(node);
+            const lineIndex = getLineIndex(node);
+            const lineBias = lineIndex === 0 ? -112 : 112;
+            return lineBias + centeredIndex * 94 + (centeredIndex % 2 === 0 ? 12 : -12);
+          };
+          const getAssembleY = (node: SVGElement) => {
+            const centeredIndex = Math.abs(getCenteredIndex(node));
+            return getLineIndex(node) === 0 ? -132 - centeredIndex * 10 : 132 + centeredIndex * 10;
+          };
+          const getOutlineX = (node: SVGElement) => {
+            const centeredIndex = getCenteredIndex(node);
+            const lineIndex = getLineIndex(node);
+            return (lineIndex === 0 ? -38 : 38) + centeredIndex * 22;
+          };
+          const getOutlineY = (node: SVGElement) => (getLineIndex(node) === 0 ? -64 : 64);
+          const getAssembleRotation = (node: SVGElement) => {
+            const centeredIndex = getCenteredIndex(node);
+            return (getLineIndex(node) === 0 ? -1 : 1) * 5 + centeredIndex * 4.5;
+          };
+          const getOutlineRotation = (node: SVGElement) => getCenteredIndex(node) * 2.4;
 
           if (reduce) {
             gsap.set(fillNodes, { opacity: 0 });
-            gsap.set(outlineNodes, { opacity: 1, strokeDashoffset: 0 });
+            gsap.set(outlineNodes, { opacity: 1, strokeDashoffset: 0, x: 0, y: 0, rotation: 0, scale: 1 });
             return;
           }
 
@@ -61,24 +80,28 @@ export function HeroAnimatedPreview({ text, style }: HeroAnimatedPreviewProps) {
             opacity: 0,
             x: (_index, target) => getAssembleX(target as SVGElement),
             y: (_index, target) => getAssembleY(target as SVGElement),
-            scale: 0.8,
-            filter: "blur(14px)",
+            rotation: (_index, target) => getAssembleRotation(target as SVGElement),
+            scale: 0.78,
+            filter: "blur(18px)",
             transformOrigin: "50% 50%",
+            force3D: true,
           });
           gsap.set(outlineNodes, {
             opacity: 0,
-            x: (_index, target) => getAssembleX(target as SVGElement) * 0.28,
+            x: (_index, target) => getOutlineX(target as SVGElement),
             y: (_index, target) => getOutlineY(target as SVGElement),
-            scale: 1.04,
+            rotation: (_index, target) => getOutlineRotation(target as SVGElement),
+            scale: 1.06,
             filter: "blur(0px)",
             strokeDashoffset: 1400,
             transformOrigin: "50% 50%",
+            force3D: true,
           });
 
           if (board) {
             gsap.to(board, {
-              y: -8,
-              duration: 6.2,
+              y: -10,
+              duration: 8.6 / speedMultiplier,
               ease: "sine.inOut",
               repeat: -1,
               yoyo: true,
@@ -87,8 +110,8 @@ export function HeroAnimatedPreview({ text, style }: HeroAnimatedPreviewProps) {
 
           if (panel) {
             gsap.to(panel, {
-              scale: 1.01,
-              duration: 6.2,
+              scale: 1.012,
+              duration: 8.6 / speedMultiplier,
               ease: "sine.inOut",
               repeat: -1,
               yoyo: true,
@@ -101,70 +124,95 @@ export function HeroAnimatedPreview({ text, style }: HeroAnimatedPreviewProps) {
             defaults: { ease: "power2.inOut" },
           });
 
+          timeline.timeScale(speedMultiplier);
+
           timeline
-            .to({}, { duration: 0.55 })
+            .to({}, { duration: 0.7 })
             .to(
               fillNodes,
               {
                 opacity: 1,
                 x: 0,
                 y: 0,
+                rotation: 0,
                 scale: 1,
                 filter: "blur(0px)",
-                duration: 1.85,
+                duration: 2.45,
                 stagger: {
-                  each: 0.12,
-                  from: "center",
+                  each: 0.16,
+                  from: "edges",
                 },
                 ease: "expo.out",
               },
             )
-            .to({}, { duration: 0.5 })
+            .to(
+              fillNodes,
+              {
+                keyframes: [
+                  {
+                    y: (_index, target) => (getLineIndex(target as SVGElement) === 0 ? -4 : 4),
+                    duration: 0.28,
+                  },
+                  {
+                    y: 0,
+                    duration: 0.5,
+                  },
+                ],
+                stagger: {
+                  each: 0.05,
+                  from: "center",
+                },
+                ease: "sine.out",
+              },
+              "-=1.1",
+            )
+            .to({}, { duration: 1.15 })
             .to(
               outlineNodes,
               {
                 opacity: 1,
                 x: 0,
                 y: 0,
+                rotation: 0,
                 scale: 1,
                 strokeDashoffset: 0,
-                duration: 1.75,
+                duration: 2.2,
                 stagger: {
-                  each: 0.11,
+                  each: 0.14,
                   from: "center",
                 },
-                ease: "power3.out",
+                ease: "power4.out",
               },
-              1.9,
+              "+=0.15",
             )
             .to(
               fillNodes,
               {
                 opacity: 0,
-                y: (_index, target) => (getLineIndex(target as SVGElement) === 0 ? -14 : 14),
-                scale: 1.015,
-                filter: "blur(6px)",
-                duration: 1.05,
+                y: (_index, target) => (getLineIndex(target as SVGElement) === 0 ? -10 : 10),
+                scale: 0.985,
+                filter: "blur(8px)",
+                duration: 0.88,
                 stagger: {
-                  each: 0.08,
+                  each: 0.06,
                   from: "center",
                 },
               },
-              2.28,
+              "-=1.55",
             )
             .to(
               outlineNodes,
               {
-                filter: "drop-shadow(0 10px 22px rgba(118,132,182,0.12))",
-                duration: 0.8,
+                filter: "drop-shadow(0 12px 24px rgba(118,132,182,0.12))",
+                duration: 1.1,
                 stagger: {
                   each: 0.03,
                   from: "center",
                 },
               },
-              2.66,
+              "-=1.05",
             )
-            .to({}, { duration: 2.9 });
+            .to({}, { duration: 3.4 });
         },
       );
 

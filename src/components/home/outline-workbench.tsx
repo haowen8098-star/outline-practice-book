@@ -53,6 +53,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
   const [status, setStatus] = useState<string | null>(null);
   const [statusTone, setStatusTone] = useState<StatusTone>("neutral");
   const [showMobileBar, setShowMobileBar] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
 
   const previewText = textInput.trim() ? readSearchState({ text: textInput }).text : DEFAULT_SAMPLE_TEXT;
   const deferredText = useDeferredValue(previewText);
@@ -100,6 +101,14 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
 
     observer.observe(node);
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsMobileViewport(mediaQuery.matches);
+    sync();
+    mediaQuery.addEventListener("change", sync);
+    return () => mediaQuery.removeEventListener("change", sync);
   }, []);
 
   function announceStatus(message: string, tone: StatusTone = "neutral") {
@@ -194,7 +203,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
     <section ref={workbenchRef} id="workbench" className="scroll-mt-24 space-y-8 sm:scroll-mt-28">
       <div className="overflow-hidden rounded-[42px] border border-[color:var(--border-soft)] bg-[color:var(--surface)] shadow-[var(--shadow-soft)]">
         <div className="grid gap-0 xl:grid-cols-[340px_minmax(0,1fr)]">
-          <div className="order-2 space-y-6 border-b border-[color:var(--border-soft)] px-5 py-6 sm:px-6 sm:py-7 xl:order-1 xl:border-b-0 xl:border-r">
+          <div className="order-2 min-w-0 space-y-6 border-b border-[color:var(--border-soft)] px-5 py-6 sm:px-6 sm:py-7 xl:order-1 xl:border-b-0 xl:border-r">
             <div className="space-y-2">
               <h2 className="text-balance text-3xl font-semibold tracking-tight text-[color:var(--foreground)] sm:text-4xl">
                 输入文字，直接看空心字轮廓。
@@ -314,10 +323,11 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
             </div>
           </div>
 
-          <div className="order-1 space-y-6 px-5 py-6 sm:px-6 sm:py-7 xl:order-2">
+          <div className="order-1 min-w-0 space-y-6 px-5 py-6 sm:px-6 sm:py-7 xl:order-2">
             <div
               ref={previewCardRef}
-              className="overflow-hidden rounded-[34px] border border-[color:var(--border-soft)] p-4 shadow-[0_20px_48px_rgba(130,160,143,0.08)] sm:p-6"
+              data-mobile-preview
+              className="min-w-0 max-w-full overflow-hidden rounded-[34px] border border-[color:var(--border-soft)] p-4 shadow-[0_20px_48px_rgba(130,160,143,0.08)] sm:p-6"
               style={{
                 background: `linear-gradient(145deg, ${activeStyle.background.from} 0%, ${activeStyle.background.via} 50%, ${activeStyle.background.to} 100%)`,
               }}
@@ -327,7 +337,7 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                   <p className="section-kicker">当前预览</p>
                   <h3 className="mt-1 text-2xl font-semibold text-[color:var(--foreground)]">{activeStyle.name}</h3>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="hidden flex-wrap items-center gap-2 sm:flex">
                   <button
                     type="button"
                     onClick={handleCopyShare}
@@ -354,7 +364,33 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                 </div>
               </div>
 
-              <OutlinePreviewSvg ref={exportTargetRef} text={deferredText} style={activeStyle} paper={paper} className="w-full" />
+              {isMobileViewport ? (
+                <div className="min-w-0 max-w-full rounded-[28px] border border-white/78 bg-white/74 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.84)]">
+                  <div
+                    className="min-w-0 max-w-full overflow-hidden rounded-[24px] px-3 pt-3"
+                    style={{
+                      background: `linear-gradient(145deg, ${activeStyle.background.from} 0%, ${activeStyle.background.via} 52%, ${activeStyle.background.to} 100%)`,
+                    }}
+                  >
+                    <OutlinePreviewSvg
+                      ref={exportTargetRef}
+                      text={deferredText}
+                      style={activeStyle}
+                      compact
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <OutlinePreviewSvg
+                  ref={exportTargetRef}
+                  text={deferredText}
+                  style={activeStyle}
+                  paper={paper}
+                  layout="default"
+                  className="block w-full"
+                />
+              )}
 
               <div className="mt-4 space-y-3 border-t border-[color:var(--border-soft)] pt-4">
                 <div className="flex flex-wrap gap-2">
@@ -393,9 +429,9 @@ export function OutlineWorkbench({ initialState }: { initialState: SearchState }
                 <p className="section-kicker">换一组看看</p>
                 <p className="text-sm text-[color:var(--muted-foreground)]">先看哪一种最清楚，再决定要不要往下学。</p>
               </div>
-              <div className="soft-scroll mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible xl:grid-cols-3 2xl:grid-cols-6">
+              <div className="soft-scroll mt-4 -mx-1 flex max-w-full min-w-0 snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-2 [touch-action:pan-x] md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 xl:grid-cols-3 2xl:grid-cols-6">
                 {prioritizedStyles.map((style) => (
-                  <div key={style.id} className="w-[272px] shrink-0 snap-center md:w-auto md:min-w-0">
+                  <div key={style.id} className="w-[min(82vw,272px)] shrink-0 snap-start md:w-auto md:min-w-0">
                     <StyleCard
                       text={deferredText}
                       style={style}

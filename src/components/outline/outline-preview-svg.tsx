@@ -26,13 +26,24 @@ interface OutlinePreviewSvgProps {
   paper?: PracticePaperId;
   mode?: PreviewMode;
   compact?: boolean;
+  layout?: "default" | "mobile";
   visualWeight?: "default" | "hero";
   animationVariant?: "default" | "solid-to-outline";
   className?: string;
 }
 
 export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProps>(function OutlinePreviewSvg(
-  { text, style, paper = "grid", mode = "final", compact = false, visualWeight = "default", animationVariant = "default", className },
+  {
+    text,
+    style,
+    paper = "grid",
+    mode = "final",
+    compact = false,
+    layout = "default",
+    visualWeight = "default",
+    animationVariant = "default",
+    className,
+  },
   ref,
 ) {
   const uniqueId = useId().replace(/:/g, "");
@@ -45,10 +56,11 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
   const isGsapTimeline = mode === "timeline";
   const hasAnimationLayers = isAnimated || isGsapTimeline;
   const isHeroWeight = visualWeight === "hero";
+  const isMobileLayout = layout === "mobile";
   const useSolidToOutline = hasAnimationLayers && animationVariant === "solid-to-outline";
-  const viewHeight = compact ? 280 : isHeroWeight ? 432 : 340;
-  const boardHeight = compact ? 256 : isHeroWeight ? 388 : 312;
-  const finalStrokeWidth = Math.max(3, style.strokeWidth * (compact ? 0.35 : 0.4));
+  const viewHeight = compact ? 280 : isHeroWeight ? 456 : isMobileLayout ? 304 : 340;
+  const boardHeight = compact ? 256 : isHeroWeight ? 410 : isMobileLayout ? 274 : 312;
+  const finalStrokeWidth = Math.max(3, style.strokeWidth * (compact ? 0.35 : isMobileLayout ? 0.44 : 0.4));
   const expandStrokeWidth = Math.max(finalStrokeWidth + 1.1, style.strokeWidth * 0.52);
   const showMeasurementLines = mode === "measure";
   const showFinalOutline = mode === "final" || mode === "measure" || hasAnimationLayers;
@@ -57,14 +69,27 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
   const fontFamily = style.fontFamily || cjkFontStack;
   const latinFontFamily = style.latinFontFamily || fontFamily;
   const isShadowVariant = style.renderVariant === "shadow";
-  const renderByChar = style.renderMode === "chars" || (isHeroWeight && hasAnimationLayers && !isShadowVariant);
+  const renderByChar =
+    style.renderMode === "chars" || compact || isMobileLayout || (isHeroWeight && hasAnimationLayers && !isShadowVariant);
   const shadowColor = style.shadow?.color ?? "#95684b";
   const shadowOffsetX = style.shadow?.offsetX ?? 6;
   const shadowOffsetY = style.shadow?.offsetY ?? 7;
-  const displayFontSize = isHeroWeight ? Math.min(184, Math.max(126, fontSize * 1.52)) : fontSize;
-  const displayLetterSpacing = isHeroWeight ? style.letterSpacing + 18 : style.letterSpacing;
-  const displayLineGap = isHeroWeight ? displayFontSize * 1.26 : fontSize * 1.05;
-  const displayCenterY = compact ? 160 : isHeroWeight ? 198 : 160;
+  const displayFontSize = isHeroWeight
+    ? Math.min(178, Math.max(122, fontSize * 1.42))
+    : isMobileLayout
+      ? Math.min(104, Math.max(74, fontSize * 0.82))
+      : fontSize;
+  const displayLetterSpacing = isHeroWeight
+    ? style.letterSpacing + 26
+    : isMobileLayout
+      ? Math.max(4, style.letterSpacing * 0.4)
+      : style.letterSpacing;
+  const displayLineGap = isHeroWeight
+    ? displayFontSize * 1.42
+    : isMobileLayout
+      ? displayFontSize * 1.02
+      : fontSize * 1.05;
+  const displayCenterY = compact ? 160 : isHeroWeight ? 206 : isMobileLayout ? 152 : 160;
   const displayPositions = positions.map((line, index) => ({
     ...line,
     lineIndex: index,
@@ -395,6 +420,7 @@ export const OutlinePreviewSvg = forwardRef<SVGSVGElement, OutlinePreviewSvgProp
       viewBox={`0 0 760 ${viewHeight}`}
       role="img"
       aria-label={`${style.name}预览`}
+      preserveAspectRatio="xMidYMid meet"
       className={`${isAnimated ? "outline-preview-svg outline-preview-svg--animated" : "outline-preview-svg"} ${isGsapTimeline ? "outline-preview-svg--timeline" : ""} ${useSolidToOutline ? "outline-preview-svg--solid-to-outline" : ""} ${className ?? ""}`.trim()}
       xmlns="http://www.w3.org/2000/svg"
     >
